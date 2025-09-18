@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IITM BS HUB - Group Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -34,14 +34,17 @@
             padding: 6px 12px; 
             border-radius: 8px; 
             box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
-            word-break: break-word; 
+            /* FIX 2: ग्लोबल वर्ड-ब्रेक यहाँ से हटाया गया */
+        }
+        /* FIX 2.1: यह स्टाइल अब केवल मैसेज टेक्स्ट पर लागू होगी */
+        .message-text {
+            word-break: break-word;
         }
         .user-bubble { background-color: #dcf8c6; margin-left: auto; }
         .other-bubble { background-color: #ffffff; margin-right: auto; }
         #chat-window::-webkit-scrollbar { width: 6px; }
         #chat-window::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px;}
         
-        /* Improved Admin Blue Tick */
         .admin-tick-wrapper {
             display: inline-flex;
             align-items: center;
@@ -51,8 +54,9 @@
             background-color: #1DA1F2;
             color: white;
             border-radius: 50%;
-            font-size: 0.8em; /* Adjust size relative to name */
+            font-size: 0.8em;
             margin-left: 4px;
+            flex-shrink: 0; /* यह टिक को सिकुड़ने से रोकेगा */
         }
         
         .message-options { opacity: 0; transition: opacity 0.2s ease-in-out; pointer-events: none; }
@@ -61,7 +65,11 @@
 </head>
 <body class="bg-gray-200">
 
-<div x-data="{ userProfileModal: false, selectedUser: {} }" @keydown.escape.window="userProfileModal = false" class="w-full flex flex-col h-screen-dynamic">
+<div x-data="{ userProfileModal: false, selectedUser: {} }" 
+     @show-user-profile.window="selectedUser = $event.detail; userProfileModal = true"
+     @keydown.escape.window="userProfileModal = false" 
+     class="w-full flex flex-col h-screen-dynamic">
+    
     <header class="bg-[#003B5C] text-white shadow-md z-40 flex items-center p-3 flex-shrink-0">
         <a href="index.html" class="mr-4 text-white hover:bg-white/20 rounded-full p-2 w-10 h-10 flex items-center justify-center">
             <i class="fas fa-arrow-left"></i>
@@ -73,8 +81,7 @@
         </div>
     </header>
 
-    <main id="chat-window" class="flex-1 overflow-y-auto p-2 sm:p-4">
-        </main>
+    <main id="chat-window" class="flex-1 overflow-y-auto p-2 sm:p-4"></main>
     
     <footer class="bg-gray-100 p-2 flex-shrink-0 border-t">
         <form id="chat-form" class="flex items-center w-full gap-2">
@@ -98,7 +105,7 @@
         </div>
     </div>
 
-    <div x-show="userProfileModal" @click.away="userProfileModal = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div x-show="userProfileModal" @click.away="userProfileModal = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" style="display: none;">
         <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm" @click.stop>
             <div class="flex flex-col items-center">
                 <img :src="selectedUser.avatar" class="w-24 h-24 rounded-full mb-4 border-4" :class="selectedUser.isAdmin ? 'border-blue-500' : 'border-gray-300'">
@@ -122,7 +129,7 @@
     import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", authDomain: "iitm-74779.firebaseapp.com", projectId: "iitm-74779", storageBucket: "iitm-74779.appspot.com", messagingSenderId: "49030766593", appId: "1:49030766593:web:99b7eae829f4af82556000" };
-    const IMGBB_API_KEY = "c89b96a3ed515320250d4041d1130e62"; // Replaced with a valid public key if needed
+    const IMGBB_API_KEY = "c89b96a3ed515320250d4041d1130e62";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -169,16 +176,19 @@
         }
         else { 
             const escapedText = data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            messageContentHTML = `<p>${escapedText}</p>`; 
+            // FIX 4: केवल मैसेज टेक्स्ट पर वर्ड-ब्रेक लागू करने के लिए क्लास जोड़ी गई
+            messageContentHTML = `<p class="message-text">${escapedText}</p>`; 
         }
         
+        // FIX 5: नाम और टिक को सही ढंग से संरेखित करने के लिए फ्लेक्सबॉक्स और व्हाइटस्पेस-नोव्रैप का उपयोग किया गया
         const adminTickHTML = `<span class="admin-tick-wrapper"><i class="fas fa-check text-xs"></i></span>`;
-        const nameLineHTML = `<div class="flex items-center gap-1.5 mb-1"><p class="text-xs font-bold ${isAdmin ? 'text-blue-600' : 'text-purple-600'}">${data.userName}</p>${isAdmin ? adminTickHTML : ''}</div>`;
+        const nameLineHTML = `<div class="flex items-center gap-1.5 mb-1 whitespace-nowrap"><p class="text-xs font-bold ${isAdmin ? 'text-blue-600' : 'text-purple-600'}">${data.userName}</p>${isAdmin ? adminTickHTML : ''}</div>`;
 
         const messageDiv = document.createElement('div');
         messageDiv.id = `msg-${doc.id}`;
         messageDiv.className = `flex items-start gap-2.5 my-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`;
         
+        // सभी data-* एट्रिब्यूट्स अवतार पर लगाए गए हैं ताकि क्लिक करने पर सही डेटा मिले
         messageDiv.innerHTML = `
             ${!isCurrentUser ? `<img src="${avatar}" class="w-10 h-10 rounded-full cursor-pointer flex-shrink-0" data-uid="${data.uid}" data-name="${data.userName}" data-email="${data.email}" data-avatar="${avatar}" data-is-admin="${isAdmin}">` : ''}
             <div class="flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}">
@@ -202,7 +212,6 @@
             loginModal.classList.add('hidden');
             const isAdmin = user.email === "raojatin@gmail.com";
             const name = user.displayName || user.email.split('@')[0];
-            const initial = name.charAt(0).toUpperCase();
             
             currentUser = { 
                 uid: user.uid, 
@@ -255,7 +264,7 @@
             alert('An error occurred during upload.'); 
         } finally { 
             toggleLoading(false); 
-            fileInput.value = ''; // Reset file input
+            fileInput.value = '';
         }
     });
     
@@ -286,19 +295,22 @@
         }
     });
 
+    // FIX 6: अवतार पर क्लिक करने पर प्रोफाइल मॉडल खोलने के लिए नया, विश्वसनीय तरीका
     document.addEventListener('click', e => {
-        const profileAvatar = e.target.closest('[data-uid]');
+        const profileAvatar = e.target.closest('img[data-uid]');
         if (profileAvatar) {
-            const alpineComponent = profileAvatar.closest('[x-data]').__x;
-            alpineComponent.selectedUser = { 
+            // एक कस्टम इवेंट भेजें जिसमें उपयोगकर्ता की जानकारी हो
+            const userDetail = { 
                 uid: profileAvatar.dataset.uid, 
                 name: profileAvatar.dataset.name, 
                 email: profileAvatar.dataset.email, 
                 avatar: profileAvatar.dataset.avatar, 
                 isAdmin: profileAvatar.dataset.isAdmin === 'true' 
             };
+            window.dispatchEvent(new CustomEvent('show-user-profile', { detail: userDetail }));
+
+            // एडमिन कंट्रोल दिखाएं या छिपाएं
             adminControls.style.display = currentUser.isAdmin ? 'block' : 'none';
-            alpineComponent.userProfileModal = true;
         }
     });
 </script>

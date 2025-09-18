@@ -30,20 +30,27 @@
             user-select: none;
         }
         .chat-bubble { 
-            max-width: 80%; 
-            padding: 6px 12px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
-        }
+    max-width: 80%; 
+    min-width: fit-content;
+    width: auto;
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+        /* FIX 2: Replaced word-break with the modern overflow-wrap property to prevent vertical text stacking. */
         .message-text {
-            word-break: break-word;
-        }
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: nowrap;
+    display: inline-block;
+}
+
         .user-bubble { background-color: #dcf8c6; margin-left: auto; }
         .other-bubble { background-color: #ffffff; margin-right: auto; }
         #chat-window::-webkit-scrollbar { width: 6px; }
         #chat-window::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px;}
-        
-        /* The old admin-tick-wrapper class is no longer needed and has been removed. */
         
         .message-options { opacity: 0; transition: opacity 0.2s ease-in-out; pointer-events: none; }
         .group:hover .message-options { opacity: 1; pointer-events: auto; }
@@ -101,8 +108,7 @@
                 <img :src="selectedUser.avatar" class="w-24 h-24 rounded-full mb-4 border-4" :class="selectedUser.isAdmin ? 'border-blue-500' : 'border-gray-300'">
                 <div class="flex items-center text-center gap-1">
                     <h2 class="text-2xl font-bold break-all" x-text="selectedUser.name"></h2>
-                    <img x-show="selectedUser.isAdmin" src="https://i.ibb.co/RTYvxHNT/hd-blue-badge-verified-tick-mark-png-704081694710438adyvtbqafw.png" class="w-6 h-6">
-                </div>
+                    </div>
                 <p class="text-gray-500 break-all text-center" x-text="selectedUser.email"></p>
             </div>
             <div id="admin-controls" class="hidden mt-4 pt-4 border-t space-y-2">
@@ -169,9 +175,8 @@
             messageContentHTML = `<p class="message-text">${escapedText}</p>`; 
         }
         
-        // FIX: Replaced the old tick with the new image and adjusted styling.
-        const adminTickHTML = `<img src="https://i.ibb.co/RTYvxHNT/hd-blue-badge-verified-tick-mark-png-704081694710438adyvtbqafw.png" alt="Verified" class="inline-block w-4 h-4" title="Verified Admin">`;
-        const nameLineHTML = `<div class="flex items-center gap-1.5 mb-1 whitespace-nowrap"><p class="text-xs font-bold ${isAdmin ? 'text-blue-600' : 'text-purple-600'}">${data.userName}</p>${isAdmin ? adminTickHTML : ''}</div>`;
+        // FIX 1: Removed the blue tick from the name line.
+        const nameLineHTML = `<div class="flex items-center gap-1.5 mb-1 whitespace-nowrap"><p class="text-xs font-bold ${isAdmin ? 'text-blue-600' : 'text-purple-600'}">${data.userName}</p></div>`;
 
         const messageDiv = document.createElement('div');
         messageDiv.id = `msg-${doc.id}`;

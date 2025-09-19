@@ -20,14 +20,13 @@
             -webkit-touch-callout: none;
             -webkit-text-size-adjust: 100%;
             touch-action: manipulation;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         
         * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
+            box-sizing: border-box;
         }
         
         input, textarea {
@@ -41,6 +40,8 @@
         #chat-window { 
             background-color: #e5ddd5; 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            flex: 1;
+            overflow-y: auto;
         }
         
         .chat-bubble { 
@@ -73,13 +74,6 @@
             pointer-events: auto; 
         }
         
-        .reaction { transition: transform 0.1s ease; }
-        .reaction:hover { transform: scale(1.3); }
-        .reaction-pill { 
-            background-color: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(5px); 
-        }
-        
         /* Mobile specific styles */
         @media (max-width: 768px) {
             .chat-bubble { 
@@ -96,15 +90,6 @@
             .message-options button {
                 padding: 6px;
                 font-size: 12px;
-            }
-            
-            /* Handle mobile keyboard */
-            .mobile-keyboard-active {
-                padding-bottom: 0;
-            }
-            
-            .mobile-keyboard-active #chat-window {
-                padding-bottom: 20px;
             }
             
             /* Prevent zoom on input focus */
@@ -156,22 +141,38 @@
                 margin: 10px;
             }
         }
+
+        /* Fixed container styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .chat-header {
+            flex-shrink: 0;
+            z-index: 40;
+        }
+
+        .chat-footer {
+            flex-shrink: 0;
+            background: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+        }
     </style>
 </head>
-<body class="flex flex-col h-screen bg-gray-200">
+<body>
 
 <div x-data="{ 
     userProfileModal: false, 
-    selectedUser: {}, 
-    reactionPicker: { visible: false, messageId: null, top: 0, left: 0 },
-    isKeyboardActive: false
+    selectedUser: {}
 }" 
-@keydown.escape.window="reactionPicker.visible = false; userProfileModal = false" 
-:class="{ 'mobile-keyboard-active': isKeyboardActive }"
-class="w-full h-full flex flex-col">
+@keydown.escape.window="userProfileModal = false" 
+class="chat-container">
 
     <!-- Header -->
-    <header class="bg-[#003B5C] text-white shadow-md z-40 flex items-center p-3 sm:p-4 flex-shrink-0">
+    <header class="chat-header bg-[#003B5C] text-white shadow-md flex items-center p-3 sm:p-4">
         <a href="index.html" class="mr-3 sm:mr-4 text-white hover:bg-white/20 rounded-full p-2"><i class="fas fa-arrow-left text-sm sm:text-base"></i></a>
         <i class="fas fa-users text-lg sm:text-2xl mr-2 sm:mr-3"></i>
         <div>
@@ -181,12 +182,12 @@ class="w-full h-full flex flex-col">
     </header>
 
     <!-- Chat Window -->
-    <main id="chat-window" class="flex-1 overflow-y-auto p-2 sm:p-4 pb-2">
+    <main id="chat-window" class="p-2 sm:p-4">
         <!-- Messages will be loaded here -->
     </main>
     
     <!-- Message Input Form -->
-    <footer class="bg-gray-100 p-2 sm:p-3 flex-shrink-0 border-t">
+    <footer class="chat-footer p-2 sm:p-3">
         <form id="chat-form" class="flex items-center space-x-2 sm:space-x-3">
             <button type="button" id="file-upload-btn" class="text-gray-500 hover:text-[#005a8b] w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0">
                 <i class="fas fa-paperclip text-lg sm:text-xl"></i>
@@ -228,25 +229,13 @@ class="w-full h-full flex flex-col">
             </div>
         </div>
     </div>
-    
-    <!-- Reaction Picker -->
-    <div x-show="reactionPicker.visible" x-cloak @click.away="reactionPicker.visible = false"
-         :style="`top: ${reactionPicker.top}px; left: ${reactionPicker.left}px`"
-         class="fixed bg-white rounded-full shadow-lg p-1 flex space-x-1 sm:space-x-2 z-50 text-lg sm:text-2xl">
-        <span @click="reactToMessage(reactionPicker.messageId, '👍'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">👍</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '❤️'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">❤️</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😂'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😂</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😮'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😮</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😢'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😢</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '🙏'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">🙏</span>
-    </div>
 </div>
 
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-    import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+    import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", authDomain: "iitm-74779.firebaseapp.com", projectId: "iitm-74779", storageBucket: "iitm-74779.appspot.com", messagingSenderId: "49030766593", appId: "1:49030766593:web:99b7eae829f4af82556000" };
     const IMGBB_API_KEY = "f31247f51f07c7e6fdf325abaed8e58c";
@@ -267,34 +256,6 @@ class="w-full h-full flex flex-col">
     const sendSpinner = document.getElementById('send-spinner');
 
     let currentUser = null;
-
-    // Mobile keyboard handling
-    const alpineComponent = document.querySelector('[x-data]').__x;
-    
-    // Handle mobile keyboard show/hide
-    messageInput.addEventListener('focus', () => {
-        if (window.innerWidth <= 768) {
-            setTimeout(() => {
-                alpineComponent.isKeyboardActive = true;
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }, 300);
-        }
-    });
-
-    messageInput.addEventListener('blur', () => {
-        if (window.innerWidth <= 768) {
-            setTimeout(() => {
-                alpineComponent.isKeyboardActive = false;
-            }, 300);
-        }
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            alpineComponent.isKeyboardActive = false;
-        }
-    });
 
     function renderMessage(doc) {
         const data = doc.data();
@@ -319,10 +280,6 @@ class="w-full h-full flex flex-col">
             messageContentHTML = `<p class="break-words text-sm sm:text-base">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`; 
         }
         
-        const reactionsHTML = data.reactions ? Object.entries(data.reactions).map(([emoji, uids]) => 
-            uids.length > 0 ? `<div class="reaction-pill px-2 py-0.5 rounded-full text-xs sm:text-sm flex items-center gap-1">${emoji}<span>${uids.length}</span></div>` : ''
-        ).join('') : '';
-        
         const nameLineHTML = `
             <div class="flex items-center gap-1.5 mb-1">
                 <p class="text-xs font-bold ${isAdmin ? 'text-blue-600' : 'text-purple-600'}">${data.userName}</p>
@@ -342,13 +299,12 @@ class="w-full h-full flex flex-col">
                         ${!isCurrentUser ? nameLineHTML : ''}
                         ${messageContentHTML}
                     </div>
-                    ${reactionsHTML ? `<div class="flex gap-1 mt-1 ${isCurrentUser ? 'justify-end' : 'justify-start'}">${reactionsHTML}</div>` : ''}
-                    <div class="message-options absolute top-0 ${isCurrentUser ? 'left-0 -translate-x-full' : 'right-0 translate-x-full'} h-full flex items-center px-1 sm:px-2">
+                    ${isCurrentUser ? `
+                    <div class="message-options absolute top-0 left-0 -translate-x-full h-full flex items-center px-1 sm:px-2">
                          <div class="bg-white rounded-full shadow-md flex">
-                            <button class="p-1 sm:p-2 text-gray-600 hover:text-blue-500 text-xs sm:text-sm" data-action="react" data-id="${doc.id}"><i class="fas fa-smile"></i></button>
-                            ${isCurrentUser ? `<button class="p-1 sm:p-2 text-gray-600 hover:text-red-500 text-xs sm:text-sm" data-action="delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>` : ''}
+                            <button class="p-1 sm:p-2 text-gray-600 hover:text-red-500 text-xs sm:text-sm" data-action="delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
                          </div>
-                    </div>
+                    </div>` : ''}
                 </div>
                 <p class="text-xs text-gray-500 px-2 mt-1">${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''}</p>
             </div>
@@ -405,8 +361,7 @@ class="w-full h-full flex flex-col">
                 email: currentUser.email, 
                 userName: currentUser.name, 
                 userAvatar: currentUser.avatar, 
-                timestamp: serverTimestamp(), 
-                reactions: {} 
+                timestamp: serverTimestamp()
             });
             
            // Auto scroll to bottom after sending message
@@ -436,8 +391,7 @@ class="w-full h-full flex flex-col">
                     email: currentUser.email, 
                     userName: currentUser.name, 
                     userAvatar: currentUser.avatar, 
-                    timestamp: serverTimestamp(), 
-                    reactions: {} 
+                    timestamp: serverTimestamp()
                 });
             } else { 
                 alert('File upload failed: ' + result.error.message); 
@@ -459,37 +413,12 @@ class="w-full h-full flex flex-col">
         fileUploadBtn.disabled = isLoading;
     }
     
-    window.reactToMessage = async (messageId, emoji) => {
-        if (!currentUser) return;
-        const messageRef = doc(db, 'group_chat', messageId);
-        const messageSnap = await getDoc(messageRef);
-        if (!messageSnap.exists()) return;
-
-        const data = messageSnap.data();
-        const reactions = data.reactions || {};
-        
-        for(const key in reactions) {
-            if(key !== emoji) {
-                reactions[key] = reactions[key]?.filter(uid => uid !== currentUser.uid);
-            }
-        }
-        
-        if (reactions[emoji] && reactions[emoji].includes(currentUser.uid)) {
-            reactions[emoji] = reactions[emoji].filter(uid => uid !== currentUser.uid);
-        } else {
-            if (!reactions[emoji]) reactions[emoji] = [];
-            reactions[emoji].push(currentUser.uid);
-        }
-        await updateDoc(messageRef, { reactions });
-    };
-
     chatWindow.addEventListener('click', async (e) => {
         const target = e.target.closest('button[data-action]');
         if (!target) return;
         
         const action = target.dataset.action;
         const messageId = target.dataset.id;
-        const alpineComponent = target.closest('[x-data]').__x;
 
         if (action === 'delete') {
             const messageRef = doc(db, 'group_chat', messageId);
@@ -504,23 +433,6 @@ class="w-full h-full flex flex-col">
                     }
                 }
             }
-        }
-        if (action === 'react') {
-            const rect = target.getBoundingClientRect();
-            const windowWidth = window.innerWidth;
-            const pickerWidth = 200;
-            let left = rect.left - (pickerWidth / 2);
-            
-            // Adjust position for mobile screens
-            if (left < 10) left = 10;
-            if (left + pickerWidth > windowWidth - 10) left = windowWidth - pickerWidth - 10;
-            
-            alpineComponent.reactionPicker = {
-                visible: true,
-                messageId: messageId,
-                top: rect.top - 60,
-                left: left
-            };
         }
     });
 

@@ -1,326 +1,261 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>IITM BS HUB - Dashboard</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
+    <title>IITM BS HUB - Student Dashboard</title>
     
-
+    <meta name="description" content="Your central hub for all IITM BS resources, including notes, notices, and class schedules.">
+    <meta name="keywords" content="IITM BS, IIT Madras, BS in Data Science, IITM Hub, Student Portal, Notes, PYQ, Schedule">
+    <meta name="author" content="Rao Developers">
+    <link rel="icon" href="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <style>
-
-        body { font-family: 'Poppins', sans-serif; background-color: #f0f4f8; }
-
-        .card { background-color: white; border-radius: 16px; box-shadow: 0 4px_12px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #e5e7eb; }
-
-        .card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0, 59, 92, 0.1); }
-
-        .notice-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
-
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .card { background-color: white; border-radius: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #e9ecef; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(0,0,0,0.08); }
         .hero-section { background: linear-gradient(135deg, #003B5C 0%, #005a8b 100%); }
-
-        .quick-link-card { border-radius: 16px; padding: 1.5rem; text-align: center; transition: all 0.3s ease; background-color: #ffffff; color: #003B5C; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid transparent; }
-
-        .quick-link-card:hover { transform: scale(1.05); background-color: #003B5C; color: white; border-color: #f17922; }
-
+        .quick-link-card { border-radius: 1rem; padding: 1.5rem; text-align: center; transition: all 0.3s ease; background-color: #ffffff; color: #003B5C; border: 1px solid #e9ecef; }
+        .quick-link-card:hover { transform: scale(1.05); background-color: #003B5C; color: white; box-shadow: 0 8px 20px rgba(0, 59, 92, 0.15); }
+        .new-badge { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(241, 121, 34, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(241, 121, 34, 0); } 100% { box-shadow: 0 0 0 0 rgba(241, 121, 34, 0); } }
     </style>
-
 </head>
-
 <body class="text-gray-800">
 
-
-
-    <!-- Header -->
-
-    <header class="bg-white shadow-sm sticky top-0 z-40" x-data="{ isProfileOpen: false }">
-
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-
+    <header class="bg-white shadow-md sticky top-0 z-40" x-data="{ isProfileOpen: false }">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-3">
-
-                <img src="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" alt="IITM BS Hub Logo" class="h-10 w-10">
-
-                <span class="text-xl font-bold text-[#003B5C] hidden sm:block">IITM BS HUB</span>
-
+                <img src="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" alt="IITM BS Hub Logo" class="h-12 w-12">
+                <span class="text-2xl font-bold text-[#003B5C] hidden sm:block">IITM BS HUB</span>
             </a>
-
             <div class="relative">
-
-                <a href="login.html" id="login-button" class="hidden bg-[#f17922] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#d96817] transition-colors">Login</a>
-
+                <a href="login.html" id="login-button" class="hidden bg-[#f17922] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#d96817] transition-colors shadow-sm">Login</a>
                 <div id="user-avatar-area" class="hidden">
-
                     <button @click="isProfileOpen = !isProfileOpen" class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#005a8b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f17922]">
-
-                        <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" id="user-avatar-img">
-
+                        <img src="https://ui-avatars.com/api/?name=U&background=003B5C&color=fff&size=100" alt="User Avatar" id="user-avatar-img">
                     </button>
-
                     <div x-show="isProfileOpen" @click.away="isProfileOpen = false" x-transition class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl py-2 z-50 border">
-
                         <div class="flex items-center px-4 py-3 border-b">
-
-                            <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" class="h-12 w-12 rounded-full mr-3" id="dropdown-user-img">
-
+                            <img src="https://ui-avatars.com/api/?name=U&background=003B5C&color=fff&size=100" alt="User Avatar" class="h-12 w-12 rounded-full mr-3" id="dropdown-user-img">
                             <div>
-
                                 <p class="font-semibold text-gray-800 text-lg" id="user-name">Guest User</p>
-
                                 <p class="text-sm text-gray-500 truncate" id="user-email">email@example.com</p>
-
                             </div>
-
                         </div>
-
                         <a href="#" id="logout-button" class="flex items-center w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50/50"><i class="fas fa-sign-out-alt w-5 mr-3"></i>Logout</a>
-
                     </div>
-
                 </div>
-
             </div>
-
-        </div>
-
+        </nav>
     </header>
 
-
-
-    <!-- Main Content -->
+    <div id="welcome-modal" x-data="{ open: false }" x-show="open" @keydown.escape.window="open = false" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div @click="open = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <img id="modal-image" src="https://placehold.co/600x600/003b5c/ffffff?text=IITM+BS+HUB" alt="Welcome Image" class="w-full h-64 object-cover">
+                <div class="px-6 py-5">
+                    <h3 class="text-2xl leading-6 font-bold text-[#003B5C]" id="modal-title">Welcome to the Hub!</h3>
+                    <div class="mt-3"><p class="text-sm text-gray-600" id="modal-about">Your one-stop destination for the IITM BS program.</p></div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-3">
+                    <a id="modal-button" href="#" target="_blank" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#f17922] text-base font-medium text-white hover:bg-[#d96817] sm:w-auto sm:text-sm">Learn More</a>
+                    <button @click="open = false" type="button" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main>
-
-        <section class="hero-section text-white"><div class="container mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 text-center"><h1 class="text-3xl md:text-5xl font-bold mb-2">Welcome to Your Dashboard</h1><p class="text-lg text-white/80">All your resources, right at your fingertips.</p></div></section>
-
-        <div class="container mx-auto p-4 md:p-6 lg:p-8 -mt-16"><div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <div class="lg:col-span-2 space-y-8">
-
-                <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
-                    <a href="notes.html" class="quick-link-card"><i class="fas fa-book-open text-4xl mb-4"></i><h3 class="text-xl font-bold">Get Notes</h3><p class="text-sm opacity-80 mt-1">Access all your subject notes here.</p></a>
-
-                    <a href="pyqs.html" class="quick-link-card"><i class="fas fa-file-alt text-4xl mb-4"></i><h3 class="text-xl font-bold">Get PYQs</h3><p class="text-sm opacity-80 mt-1">Previous Year Question Papers.</p></a>
-
-                </section>
-
-                <section id="notice-area" class="card p-5 md:p-6"><h2 class="text-2xl font-bold text-[#003B5C] mb-4 border-b pb-3 flex items-center"><i class="fas fa-bullhorn mr-3 text-[#f17922]"></i>Notice Board</h2><div id="notice-list" class="space-y-3"><div class="p-3 text-center text-gray-500">Loading notices...</div></div></section>
-
-                <section class="card overflow-hidden"><div class="p-5 md:p-6"><h2 class="text-2xl font-bold text-[#003B5C] mb-4 flex items-center"><i class="fas fa-calendar-alt mr-3 text-[#f17922]"></i>Live Class Schedule</h2></div><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-gray-50/70 text-xs text-gray-700 uppercase tracking-wider"><tr><th scope="col" class="px-6 py-3">Date</th><th scope="col" class="px-6 py-3">Time</th><th scope="col" class="px-6 py-3">Subject</th><th scope="col" class="px-6 py-3">Topic / Link</th></tr></thead><tbody id="schedule-body"><tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading schedule...</td></tr></tbody></table></div></section>
-
+        <section class="hero-section text-white">
+            <div class="container mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-3">Welcome to Your Dashboard</h1>
+                <p class="text-lg text-white/80 max-w-2xl mx-auto">All your academic resources, notices, and schedules, organized in one place.</p>
             </div>
-
-            <div class="space-y-8">
-
-                 <section class="card p-6 text-center bg-green-500 text-white"><i class="fab fa-whatsapp text-5xl mb-3"></i><h3 class="text-xl font-bold mb-3">Stay Connected</h3><p class="opacity-90 mb-4">Join our official WhatsApp channel for instant updates.</p><a href="#" id="whatsapp-link" target="_blank" class="w-full block bg-white text-green-600 font-bold py-3 px-4 rounded-lg hover:bg-white/90 transition-colors">Join Channel</a></section>
-
-                 <section class="card p-6"><h3 class="text-xl font-bold text-gray-800 mb-4">Support Center</h3><p class="text-gray-500 mb-4">Facing an issue or have a suggestion? Let us know!</p><a href="support.html" class="w-full block text-center bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">Need an Update?</a></section>
-
+        </section>
+        
+        <div class="container mx-auto p-4 md:p-6 lg:p-8 -mt-16">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <a href="notes.html" class="quick-link-card"><i class="fas fa-book-open text-4xl mb-4"></i><h3 class="text-xl font-bold">Get Notes</h3></a>
+                        <a href="pyqs.html" class="quick-link-card"><i class="fas fa-file-alt text-4xl mb-4"></i><h3 class="text-xl font-bold">Get PYQs</h3></a>
+                    </section>
+                    
+                    <section class="card p-5 md:p-7">
+                        <h2 class="text-2xl font-bold text-[#003B5C] mb-5 border-b pb-4 flex items-center"><i class="fas fa-bullhorn mr-3 text-[#f17922]"></i>Notice Board</h2>
+                        <div id="notice-list" class="space-y-4"><div class="p-3 text-center text-gray-500">Loading notices...</div></div>
+                    </section>
+                    
+                    <section class="card overflow-hidden">
+                        <div class="p-5 md:p-7"><h2 class="text-2xl font-bold text-[#003B5C] mb-4 flex items-center"><i class="fas fa-calendar-alt mr-3 text-[#f17922]"></i>Live Class Schedule</h2></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-xs text-gray-700 uppercase tracking-wider">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Date</th>
+                                        <th scope="col" class="px-6 py-3">Time</th>
+                                        <th scope="col" class="px-6 py-3">Subject</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Session Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedule-body">
+                                    <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading schedule...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="space-y-8">
+                     <section class="card p-6 text-center bg-green-500 text-white shadow-lg"><i class="fab fa-whatsapp text-5xl mb-3"></i><h3 class="text-xl font-bold mb-3">Stay Connected</h3><a href="#" id="whatsapp-link" target="_blank" class="w-full block bg-white text-green-600 font-bold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors">Join Channel</a></section>
+                     <section class="card p-6"><h3 class="text-xl font-bold text-gray-800 mb-4">Support Center</h3><a href="support.html" class="w-full block text-center bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">Need an Update?</a></section>
+                </div>
             </div>
-
-        </div></div>
-
+        </div>
     </main>
-
     
-
-    <a href="chat.html" class="fixed bottom-6 right-6 bg-[#003B5C] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transform hover:scale-110 transition-transform duration-300"><i class="fas fa-comments text-2xl"></i></a>
-
-    <footer class="bg-white mt-12 py-6 border-t"><div class="container mx-auto px-4 text-center text-gray-600 text-sm">A WEBSITE BY <a href="https://raodevlopers.xyz" target="_blank" rel="noopener noreferrer" class="font-bold text-[#003B5C] hover:underline">RAO DEVELOPERS</a></div></footer>
-
-
-
-    <!-- Firebase SDK -->
+    <a href="chat.html" class="fixed bottom-6 right-6 bg-[#003B5C] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transform hover:scale-110 transition-transform duration-300 z-30" aria-label="Open group chat">
+        <i class="fas fa-comments text-2xl"></i>
+    </a>
+    
+    <footer class="bg-white mt-12 py-8 border-t">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            A WEBSITE BY <a href="https://raodevelopers.xyz" target="_blank" rel="noopener noreferrer" class="font-bold text-[#003B5C] hover:underline">RAO DEVELOPERS</a>
+        </div>
+    </footer>
 
     <script type="module">
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc, limit } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", authDomain: "iitm-74779.firebaseapp.com", projectId: "iitm-74779", storageBucket: "iitm-74779.appspot.com", messagingSenderId: "49030766593", appId: "1:49030766593:web:99b7eae829f4af82556000" };
 
-
-
         const app = initializeApp(firebaseConfig);
-
         const auth = getAuth(app);
-
         const db = getFirestore(app);
 
-
-
-        // --- Auth State Management ---
-
-        onAuthStateChanged(auth, user => {
-
+        // --- 1. Authentication ---
+        function handleAuthState(user) {
             const loginButton = document.getElementById('login-button');
-
             const userAvatarArea = document.getElementById('user-avatar-area');
-
             if (user) {
-
                 loginButton.classList.add('hidden');
-
                 userAvatarArea.classList.remove('hidden');
-
-                
-
+                const nameInitial = user.email.charAt(0).toUpperCase();
                 const nameFromEmail = user.email.split('@')[0];
-
-                const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
-
-                const initial = formattedName.charAt(0).toUpperCase();
-
-                
-
-                document.getElementById('user-name').textContent = formattedName;
-
+                document.getElementById('user-name').textContent = nameFromEmail;
                 document.getElementById('user-email').textContent = user.email;
-
-                document.getElementById('user-avatar-img').src = `https://placehold.co/100x100/003B5C/FFFFFF?text=${initial}`;
-
-                document.getElementById('dropdown-user-img').src = `https://placehold.co/100x100/003B5C/FFFFFF?text=${initial}`;
-
+                const avatarUrl = `https://ui-avatars.com/api/?name=${nameInitial}&background=003B5C&color=fff&size=100`;
+                document.getElementById('user-avatar-img').src = avatarUrl;
+                document.getElementById('dropdown-user-img').src = avatarUrl;
             } else {
-
                 loginButton.classList.remove('hidden');
-
                 userAvatarArea.classList.add('hidden');
-
             }
-
-        });
-
-
-
-        document.getElementById('logout-button').addEventListener('click', (e) => {
-
+        }
+        onAuthStateChanged(auth, handleAuthState);
+        document.getElementById('logout-button')?.addEventListener('click', (e) => {
             e.preventDefault();
-
-            signOut(auth).then(() => { window.location.href = 'login.html'; }).catch(console.error);
-
+            signOut(auth).catch(console.error);
         });
 
-
-
-        // --- Fetch and Render Data from Firestore ---
-
+        // --- 2. Render Notices ---
         function renderNotices() {
-
             const noticeList = document.getElementById('notice-list');
-
-            const q = query(collection(db, "notices"), orderBy("date", "desc"));
-
+            const q = query(collection(db, "notices"), orderBy("date", "desc"), limit(5));
             onSnapshot(q, (snapshot) => {
-
                 if (snapshot.empty) {
-
-                    noticeList.innerHTML = '<div class="p-3 text-center text-gray-500">No new notices.</div>';
-
+                    noticeList.innerHTML = '<div class="p-3 text-center text-gray-500">No new notices available.</div>';
                     return;
-
                 }
-
                 noticeList.innerHTML = '';
-
                 snapshot.forEach(doc => {
-
                     const notice = doc.data();
-
-                    noticeList.innerHTML += `<div class="notice-item p-3 flex items-start hover:bg-gray-50/50 rounded-lg"><i class="fas fa-bell text-[#005a8b] mt-1 mr-4"></i><div><p class="font-semibold text-gray-800">${notice.title}</p><p class="text-xs text-gray-500">${new Date(notice.date.toDate()).toLocaleDateString()}</p></div></div>`;
-
+                    const noticeDate = notice.date.toDate();
+                    const isNew = (new Date() - noticeDate) / (1000 * 60 * 60 * 24) < 3;
+                    noticeList.innerHTML += `
+                        <a href="blog.html?id=${doc.id}" class="block p-4 rounded-lg hover:bg-gray-50 transition-colors border">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    ${isNew ? '<span class="flex h-3 w-3 mr-3"><span class="relative inline-flex rounded-full h-3 w-3 bg-[#f17922] new-badge"></span></span>' : '<i class="fas fa-bell text-[#005a8b] mr-3"></i>'}
+                                    <p class="font-semibold text-gray-800">${notice.title}</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 ml-6">${noticeDate.toLocaleDateString()}</p>
+                        </a>`;
                 });
-
             });
-
         }
 
-
-
+        // --- 3. Render Class Schedule ---
         function renderSchedule() {
-
             const scheduleBody = document.getElementById('schedule-body');
-
-            const q = collection(db, "schedule");
-
+            const q = query(collection(db, "schedule"), orderBy("date", "asc"));
             onSnapshot(q, (snapshot) => {
-
-                 if (snapshot.empty) {
-
-                    scheduleBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Schedule not available yet.</td></tr>';
-
+                if (snapshot.empty) {
+                    scheduleBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Schedule not available.</td></tr>';
                     return;
-
                 }
-
                 scheduleBody.innerHTML = '';
-
                 snapshot.forEach(doc => {
-
                     const item = doc.data();
-
-                    scheduleBody.innerHTML += `<tr class="bg-white border-b hover:bg-gray-50/50"><td class="px-6 py-4 font-medium text-gray-900">${item.date}</td><td class="px-6 py-4">${item.time}</td><td class="px-6 py-4">${item.subject}</td><td class="px-6 py-4">${item.topic}</td></tr>`;
-
+                    scheduleBody.innerHTML += `
+                        <tr class="bg-white border-b hover:bg-gray-50/80">
+                            <td class="px-6 py-4 font-medium text-gray-900">${item.date}</td>
+                            <td class="px-6 py-4">${item.time}</td>
+                            <td class="px-6 py-4">${item.subject}</td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="bg-[#003B5C] text-white text-xs font-bold py-2 px-4 rounded-full hover:bg-[#005a8b] transition-colors inline-flex items-center">
+                                    Join Session <i class="fas fa-external-link-alt ml-2"></i>
+                                </a>
+                            </td>
+                        </tr>`;
                 });
-
             });
-
         }
-
         
-
-        async function renderWhatsappLink() {
-
+        // --- 4. Load Site-Wide Settings ---
+        async function loadSiteSettings() {
             const docRef = doc(db, "settings", "siteConfig");
-
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists() && docSnap.data().whatsappLink) {
-
-                document.getElementById('whatsapp-link').href = docSnap.data().whatsappLink;
-
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    document.getElementById('whatsapp-link').href = settings.whatsappLink || "#";
+                    document.getElementById('modal-image').src = settings.popupImageUrl || "https://placehold.co/600x600/003b5c/ffffff?text=IITM+BS+HUB";
+                    document.getElementById('modal-about').textContent = settings.popupAboutText || "Default welcome message.";
+                    document.getElementById('modal-button').textContent = settings.popupCtaButtonText || "Learn More";
+                    document.getElementById('modal-button').href = settings.popupCtaButtonUrl || "#";
+                }
+            } catch(error) {
+                console.error("Error loading site settings:", error);
             }
-
         }
 
+        // --- 5. Show Welcome Popup ---
+        function showWelcomePopup() {
+            if (!sessionStorage.getItem('hasSeenWelcomePopup')) {
+                document.getElementById('welcome-modal').__x.$data.open = true;
+                sessionStorage.setItem('hasSeenWelcomePopup', 'true');
+            }
+        }
 
-
-        // --- Initial Data Load ---
-
+        // --- Initial Load on Page Ready ---
         document.addEventListener('DOMContentLoaded', () => {
-
             renderNotices();
-
             renderSchedule();
-
-            renderWhatsappLink();
-
+            loadSiteSettings().then(showWelcomePopup);
         });
-
     </script>
-
 </body>
-
 </html>
-
-
-

@@ -1,515 +1,229 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Admin Panel - IITM BS HUB</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     
-
+    <link rel="icon" href="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-
-        .admin-card { background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
-
-        .sidebar { background: linear-gradient(135deg, #003B5C 0%, #005a8b 100%); color: white; width: 280px; }
-
-        .admin-menu-item { transition: all 0.3s ease; border-left: 4px solid transparent; }
-
-        .admin-menu-item:hover, .admin-menu-item.active { background-color: rgba(255, 255, 255, 0.1); border-left-color: #f17922; }
-
-        .btn-primary { background-color: #003B5C; color: white; }
-
-        .btn-primary:hover { background-color: #002943; }
-
-        .btn-secondary { background-color: #f17922; color: white; }
-
-        .btn-secondary:hover { background-color: #d96817; }
-
-        .btn-danger { background-color: #e53e3e; color: white; }
-
-        .btn-danger:hover { background-color: #c53030; }
-
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+        .admin-card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .form-input { display: block; width: 100%; border-radius: 0.5rem; border: 1px solid #cbd5e1; padding: 0.75rem 1rem; transition: all 0.2s ease; }
+        .form-input:focus { border-color: #003B5C; box-shadow: 0 0 0 2px rgba(0, 59, 92, 0.2); outline: none; }
+        .btn-primary { background-color: #003B5C; color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.5rem; transition: background-color 0.2s ease; }
+        .btn-primary:hover { background-color: #005a8b; }
+        .btn-danger { background-color: #dc2626; color: white; font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 0.375rem; transition: background-color 0.2s ease; }
+        .btn-danger:hover { background-color: #b91c1c; }
+        #toast { transition: transform 0.3s ease, opacity 0.3s ease; }
     </style>
-
 </head>
+<body class="text-gray-900">
 
-<body class="text-gray-800 flex h-screen">
-
-    <!-- Sidebar Navigation -->
-
-    <nav class="sidebar flex flex-col flex-shrink-0">
-
-        <div class="p-6 border-b border-white/10">
-
-            <h1 class="text-xl font-bold flex items-center">
-
-                <i class="fas fa-cogs mr-3"></i>Admin Panel
-
-            </h1>
-
-            <p class="text-sm text-white/80 mt-1">IITM BS HUB Management</p>
-
-        </div>
-
-        
-
-        <div class="flex-1 overflow-y-auto py-4">
-
-            <div class="px-4 space-y-2">
-
-                <a href="admin.html" class="admin-menu-item active flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-tachometer-alt w-5 mr-3"></i>Dashboard
-
-                </a>
-
-                <a href="admin-notices.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-bullhorn w-5 mr-3"></i>Notices
-
-                </a>
-
-                <a href="admin-schedule.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-calendar-alt w-5 mr-3"></i>Schedule
-
-                </a>
-
-                <a href="admin-settings.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-cog w-5 mr-3"></i>Settings
-
-                </a>
-
-            </div>
-
-        </div>
-
-        
-
-        <div class="p-4 border-t border-white/10">
-
-            <a href="index.html" class="flex items-center px-4 py-3 rounded-lg text-white/80 hover:text-white">
-
-                <i class="fas fa-arrow-left w-5 mr-3"></i>Back to Main Site
-
-            </a>
-
-        </div>
-
-    </nav>
-
-
-
-    <!-- Main Content Area -->
-
-    <div class="flex-1 flex flex-col overflow-hidden">
-
-        <!-- Header -->
-
-        <header class="bg-white border-b border-gray-200">
-
-            <div class="flex justify-between items-center px-6 py-4">
-
-                <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
-
-                    <p class="text-sm text-gray-600">Manage your IITM BS HUB content</p>
-
-                </div>
-
-                
-
-                <div class="flex items-center space-x-4">
-
-                    <div class="text-right">
-
-                        <p class="font-medium" id="admin-user-name">Admin User</p>
-
-                        <p class="text-sm text-gray-500" id="admin-user-role">Administrator</p>
-
-                    </div>
-
-                    <div class="relative" x-data="{ isProfileOpen: false }">
-
-                        <button @click="isProfileOpen = !isProfileOpen" class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f17922]">
-
-                            <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=A" alt="Admin Avatar" id="admin-avatar">
-
-                        </button>
-
-                        <div x-show="isProfileOpen" @click.away="isProfileOpen = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
-
-                            <a href="#" id="admin-logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sign out</a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-
-
-        <!-- Dashboard Content -->
-
-        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-                <div class="admin-card p-6 flex items-center">
-
-                    <div class="rounded-full bg-blue-100 p-4 mr-4">
-
-                        <i class="fas fa-bullhorn text-blue-600 text-xl"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3 class="text-2xl font-bold" id="notices-count">0</h3>
-
-                        <p class="text-gray-600">Active Notices</p>
-
-                    </div>
-
-                </div>
-
-                
-
-                <div class="admin-card p-6 flex items-center">
-
-                    <div class="rounded-full bg-green-100 p-4 mr-4">
-
-                        <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3 class="text-2xl font-bold" id="schedule-count">0</h3>
-
-                        <p class="text-gray-600">Scheduled Classes</p>
-
-                    </div>
-
-                </div>
-
-                
-
-                <div class="admin-card p-6 flex items-center">
-
-                    <div class="rounded-full bg-purple-100 p-4 mr-4">
-
-                        <i class="fas fa-users text-purple-600 text-xl"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3 class="text-2xl font-bold">-</h3>
-
-                        <p class="text-gray-600">Site Visitors</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- Recent Notices -->
-
-                <div class="admin-card p-6">
-
-                    <div class="flex justify-between items-center mb-4">
-
-                        <h3 class="text-lg font-bold text-gray-800">Recent Notices</h3>
-
-                        <a href="admin-notices.html" class="text-sm text-blue-600 hover:underline">View all</a>
-
-                    </div>
-
-                    <div class="space-y-4" id="recent-notices">
-
-                        <div class="text-center py-4 text-gray-500">Loading notices...</div>
-
-                    </div>
-
-                </div>
-
-                
-
-                <!-- Upcoming Schedule -->
-
-                <div class="admin-card p-6">
-
-                    <div class="flex justify-between items-center mb-4">
-
-                        <h3 class="text-lg font-bold text-gray-800">Upcoming Classes</h3>
-
-                        <a href="admin-schedule.html" class="text-sm text-blue-600 hover:underline">View all</a>
-
-                    </div>
-
-                    <div class="space-y-4" id="upcoming-schedule">
-
-                        <div class="text-center py-4 text-gray-500">Loading schedule...</div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </main>
-
+    <div id="toast" class="fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-xl translate-x-[120%] opacity-0 z-50">
+        <span id="toast-message">Operation successful!</span>
     </div>
 
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex items-center gap-4">
+            <img src="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" alt="Logo" class="h-10 w-10">
+            <h1 class="text-2xl font-bold text-[#003B5C]">Admin Content Manager</h1>
+        </div>
+    </header>
 
+    <main class="container mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        
+        <div class="space-y-6 md:space-y-8">
+            <section class="admin-card">
+                <div class="p-6 border-b"><h2 class="text-xl font-bold flex items-center"><i class="fas fa-bullhorn mr-3 text-[#f17922]"></i>Manage Blog Posts</h2></div>
+                <form id="notice-form" class="p-6 space-y-4">
+                    <div>
+                        <label for="notice-title" class="font-semibold text-sm mb-1 block">Blog Title</label>
+                        <input type="text" id="notice-title" class="form-input" placeholder="Enter the title of the blog post" required>
+                    </div>
+                    <div>
+                        <label for="notice-content" class="font-semibold text-sm mb-1 block">Full Content (HTML)</label>
+                        <textarea id="notice-content" class="form-input" rows="12" placeholder="Paste the HTML code for the blog content here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Add New Blog Post</button>
+                </form>
+                <div class="p-6">
+                    <h3 class="font-bold mb-4">Existing Posts</h3>
+                    <div id="existing-notices" class="space-y-3 max-h-96 overflow-y-auto pr-2"><div class="text-center text-gray-500 py-4">Loading...</div></div>
+                </div>
+            </section>
+        </div>
 
-    <!-- Firebase SDK -->
+        <div class="space-y-6 md:space-y-8">
+            <section class="admin-card">
+                 <div class="p-6 border-b"><h2 class="text-xl font-bold flex items-center"><i class="fas fa-calendar-alt mr-3 text-[#f17922]"></i>Manage Class Schedule</h2></div>
+                <form id="schedule-form" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label for="schedule-date" class="font-semibold text-sm mb-1 block">Date</label><input type="date" id="schedule-date" class="form-input" required></div>
+                        <div><label for="schedule-time" class="font-semibold text-sm mb-1 block">Time</label><input type="time" id="schedule-time" class="form-input" required></div>
+                    </div>
+                    <div><label for="schedule-subject" class="font-semibold text-sm mb-1 block">Subject</label><input type="text" id="schedule-subject" class="form-input" placeholder="e.g., Mathematics for Data Science" required></div>
+                    <div>
+                        <label for="schedule-link" class="font-semibold text-sm mb-1 block">Session Link (URL)</label>
+                        <input type="url" id="schedule-link" class="form-input" placeholder="https://zoom.us/j/1234..." required>
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Add Schedule Item</button>
+                </form>
+                <div class="p-6">
+                    <h3 class="font-bold mb-4">Existing Schedule Items</h3>
+                    <div id="existing-schedule" class="space-y-3 max-h-96 overflow-y-auto pr-2"><div class="text-center text-gray-500 py-4">Loading...</div></div>
+                </div>
+            </section>
+            
+            <section class="admin-card">
+                <div class="p-6 border-b"><h2 class="text-xl font-bold flex items-center"><i class="fas fa-cog mr-3 text-[#f17922]"></i>Site Settings</h2></div>
+                <form id="settings-form" class="p-6 space-y-4">
+                    <div><label for="whatsapp-link" class="font-semibold text-sm mb-1 block">WhatsApp Channel Link</label><input type="url" id="whatsapp-link" class="form-input" placeholder="https://whatsapp.com/channel/..." required></div>
+                    <hr class="my-4"><h3 class="font-bold text-lg">Welcome Popup Settings</h3>
+                    <div><label for="popup-image-url" class="font-semibold text-sm mb-1 block">Popup Image URL</label><input type="url" id="popup-image-url" class="form-input" placeholder="https://example.com/image.jpg" required></div>
+                    <div><label for="popup-about-text" class="font-semibold text-sm mb-1 block">Popup "About" Text</label><textarea id="popup-about-text" class="form-input" rows="3" placeholder="A short welcome message." required></textarea></div>
+                    <div><label for="popup-cta-text" class="font-semibold text-sm mb-1 block">Popup Button Text</label><input type="text" id="popup-cta-text" class="form-input" placeholder="e.g., Learn More" required></div>
+                    <div><label for="popup-cta-url" class="font-semibold text-sm mb-1 block">Popup Button URL</label><input type="url" id="popup-cta-url" class="form-input" placeholder="https://example.com/link" required></div>
+                    <button type="submit" class="btn-primary w-full !mt-6">Save All Settings</button>
+                </form>
+            </section>
+        </div>
+    </main>
 
     <script type="module">
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-
-        import { getFirestore, collection, onSnapshot, query, orderBy, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-
-
-        const firebaseConfig = { 
-
-            apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", 
-
-            authDomain: "iitm-74779.firebaseapp.com", 
-
-            projectId: "iitm-74779", 
-
-            storageBucket: "iitm-74779.appspot.com", 
-
-            messagingSenderId: "49030766593", 
-
-            appId: "1:49030766593:web:99b7eae829f4af82556000" 
-
-        };
-
-
-
+        // --- Firebase Config ---
+        const firebaseConfig = { apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", authDomain: "iitm-74779.firebaseapp.com", projectId: "iitm-74779", storageBucket: "iitm-74779.appspot.com", messagingSenderId: "49030766593", appId: "1:49030766593:web:99b7eae829f4af82556000" };
         const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
         const db = getFirestore(app);
-
-
-
-        // Check if user is authenticated and is an admin
-
-        onAuthStateChanged(auth, async (user) => {
-
-            if (!user) {
-
-                window.location.href = 'admin-login.html';
-
-                return;
-
-            }
-
-            
-
-            // In a real application, you would check custom claims or a user role field
-
-            // For this demo, we'll assume any logged in user is an admin
-
-            document.getElementById('admin-user-name').textContent = user.email;
-
-            document.getElementById('admin-avatar').src = `https://placehold.co/100x100/003B5C/FFFFFF?text=${user.email.charAt(0).toUpperCase()}`;
-
-            
-
-            // Load dashboard data
-
-            loadDashboardData();
-
-        });
-
-
-
-        // Logout functionality
-
-        document.getElementById('admin-logout').addEventListener('click', (e) => {
-
-            e.preventDefault();
-
-            signOut(auth).then(() => {
-
-                window.location.href = 'admin-login.html';
-
-            }).catch(console.error);
-
-        });
-
-
-
-        // Load dashboard data
-
-        async function loadDashboardData() {
-
-            // Get notices count
-
-            const noticesQuery = query(collection(db, "notices"));
-
-            const noticesSnapshot = await getDocs(noticesQuery);
-
-            document.getElementById('notices-count').textContent = noticesSnapshot.size;
-
-            
-
-            // Get schedule count
-
-            const scheduleQuery = query(collection(db, "schedule"));
-
-            const scheduleSnapshot = await getDocs(scheduleQuery);
-
-            document.getElementById('schedule-count').textContent = scheduleSnapshot.size;
-
-            
-
-            // Load recent notices
-
-            const recentNoticesQuery = query(collection(db, "notices"), orderBy("date", "desc"), where("date", "<=", Timestamp.now()));
-
-            onSnapshot(recentNoticesQuery, (snapshot) => {
-
-                const recentNoticesContainer = document.getElementById('recent-notices');
-
-                if (snapshot.empty) {
-
-                    recentNoticesContainer.innerHTML = '<div class="text-center py-4 text-gray-500">No notices found</div>';
-
-                    return;
-
-                }
-
-                
-
-                recentNoticesContainer.innerHTML = '';
-
-                let count = 0;
-
-                snapshot.forEach(doc => {
-
-                    if (count >= 5) return; // Limit to 5 recent notices
-
-                    const notice = doc.data();
-
-                    recentNoticesContainer.innerHTML += `
-
-                        <div class="flex justify-between items-start py-2 border-b border-gray-100">
-
-                            <div>
-
-                                <h4 class="font-medium">${notice.title}</h4>
-
-                                <p class="text-sm text-gray-500">${new Date(notice.date.toDate()).toLocaleDateString()}</p>
-
-                            </div>
-
-                            <a href="admin-notices.html?edit=${doc.id}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
-
-                        </div>
-
-                    `;
-
-                    count++;
-
-                });
-
-            });
-
-            
-
-            // Load upcoming schedule
-
-            const upcomingScheduleQuery = query(collection(db, "schedule"), orderBy("date"), where("date", ">=", Timestamp.now()));
-
-            onSnapshot(upcomingScheduleQuery, (snapshot) => {
-
-                const scheduleContainer = document.getElementById('upcoming-schedule');
-
-                if (snapshot.empty) {
-
-                    scheduleContainer.innerHTML = '<div class="text-center py-4 text-gray-500">No upcoming classes</div>';
-
-                    return;
-
-                }
-
-                
-
-                scheduleContainer.innerHTML = '';
-
-                let count = 0;
-
-                snapshot.forEach(doc => {
-
-                    if (count >= 5) return; // Limit to 5 upcoming classes
-
-                    const item = doc.data();
-
-                    scheduleContainer.innerHTML += `
-
-                        <div class="flex justify-between items-start py-2 border-b border-gray-100">
-
-                            <div>
-
-                                <h4 class="font-medium">${item.subject}</h4>
-
-                                <p class="text-sm text-gray-500">${item.date} at ${item.time}</p>
-
-                            </div>
-
-                            <a href="admin-schedule.html?edit=${doc.id}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
-
-                        </div>
-
-                    `;
-
-                    count++;
-
-                });
-
-            });
-
+        
+        // --- Toast Notification Helper ---
+        const toastEl = document.getElementById('toast');
+        const toastMessageEl = document.getElementById('toast-message');
+        function showToast(message, isError = false) {
+            toastMessageEl.textContent = message;
+            toastEl.className = toastEl.className.replace(/bg-\w+-\d+/, isError ? 'bg-red-500' : 'bg-green-500');
+            toastEl.classList.remove('translate-x-[120%]', 'opacity-0');
+            setTimeout(() => { toastEl.classList.add('translate-x-[120%]', 'opacity-0'); }, 3000);
         }
 
+        // --- Generic Delete Function ---
+        const handleDelete = async (collectionName, id) => {
+            if (confirm('Are you sure you want to delete this item?')) {
+                try {
+                    await deleteDoc(doc(db, collectionName, id));
+                    showToast("Item deleted successfully!");
+                } catch (error) {
+                    console.error("Error deleting item:", error);
+                    showToast("Failed to delete item.", true);
+                }
+            }
+        };
+
+        // --- 1. Manage Notices/Blogs ---
+        const noticeForm = document.getElementById('notice-form');
+        const existingNoticesEl = document.getElementById('existing-notices');
+        
+        noticeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = noticeForm['notice-title'].value;
+            const content = noticeForm['notice-content'].value;
+            try {
+                await addDoc(collection(db, "notices"), { title, content, date: serverTimestamp() });
+                noticeForm.reset();
+                showToast("Blog post added successfully!");
+            } catch (error) { showToast("Failed to add post.", true); }
+        });
+        
+        onSnapshot(query(collection(db, "notices"), orderBy("date", "desc")), (snapshot) => {
+            if (snapshot.empty) { existingNoticesEl.innerHTML = `<div class="text-center text-gray-500 py-4">No posts found.</div>`; return; }
+            existingNoticesEl.innerHTML = '';
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                const el = document.createElement('div');
+                el.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-md border';
+                el.innerHTML = `<div><p class="font-semibold">${item.title}</p><p class="text-xs text-gray-500">${item.date?.toDate().toLocaleDateString()}</p></div><button class="btn-danger">Delete</button>`;
+                el.querySelector('button').onclick = () => handleDelete('notices', doc.id);
+                existingNoticesEl.appendChild(el);
+            });
+        });
+
+        // --- 2. Manage Class Schedule ---
+        const scheduleForm = document.getElementById('schedule-form');
+        const existingScheduleEl = document.getElementById('existing-schedule');
+        
+        scheduleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const scheduleData = {
+                date: scheduleForm['schedule-date'].value,
+                time: scheduleForm['schedule-time'].value,
+                subject: scheduleForm['schedule-subject'].value,
+                link: scheduleForm['schedule-link'].value
+            };
+            try {
+                await addDoc(collection(db, "schedule"), scheduleData);
+                scheduleForm.reset();
+                showToast("Schedule item added!");
+            } catch (error) { showToast("Failed to add schedule item.", true); }
+        });
+
+        onSnapshot(query(collection(db, "schedule"), orderBy("date", "desc")), (snapshot) => {
+            if (snapshot.empty) { existingScheduleEl.innerHTML = `<div class="text-center text-gray-500 py-4">No schedule items found.</div>`; return; }
+            existingScheduleEl.innerHTML = '';
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                const el = document.createElement('div');
+                el.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-md border';
+                el.innerHTML = `<div><p class="font-semibold">${item.subject} - ${item.date}</p><a href="${item.link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate">${item.link}</a></div><button class="btn-danger">Delete</button>`;
+                el.querySelector('button').onclick = () => handleDelete('schedule', doc.id);
+                existingScheduleEl.appendChild(el);
+            });
+        });
+
+        // --- 3. Manage Site Settings ---
+        const settingsForm = document.getElementById('settings-form');
+        const settingsDocRef = doc(db, "settings", "siteConfig");
+
+        const loadSettings = async () => {
+            try {
+                const docSnap = await getDoc(settingsDocRef);
+                if (docSnap.exists()) {
+                    const s = docSnap.data();
+                    settingsForm['whatsapp-link'].value = s.whatsappLink || '';
+                    settingsForm['popup-image-url'].value = s.popupImageUrl || '';
+                    settingsForm['popup-about-text'].value = s.popupAboutText || '';
+                    settingsForm['popup-cta-text'].value = s.popupCtaButtonText || '';
+                    settingsForm['popup-cta-url'].value = s.popupCtaButtonUrl || '';
+                }
+            } catch (error) { console.error("Error loading settings:", error); }
+        };
+
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const settingsData = {
+                whatsappLink: settingsForm['whatsapp-link'].value,
+                popupImageUrl: settingsForm['popup-image-url'].value,
+                popupAboutText: settingsForm['popup-about-text'].value,
+                popupCtaButtonText: settingsForm['popup-cta-text'].value,
+                popupCtaButtonUrl: settingsForm['popup-cta-url'].value,
+            };
+            try {
+                await setDoc(settingsDocRef, settingsData, { merge: true });
+                showToast("Settings saved successfully!");
+            } catch (error) { showToast("Failed to save settings.", true); }
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
     </script>
-
 </body>
-
 </html>

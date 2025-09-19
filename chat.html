@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IITM BS HUB - Group Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -10,83 +10,221 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
-        body { font-family: 'Poppins', sans-serif; overflow: hidden; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
+        
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+            -webkit-touch-callout: default;
+        }
+        
         #chat-window { 
             background-color: #e5ddd5; 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* IE10+/Edge */
-            user-select: none; /* Standard */
         }
-        .chat-bubble { max-width: 70%; padding: 6px 12px; border-radius: 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        
+        .chat-bubble { 
+            max-width: 85%; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
+            word-break: break-word;
+        }
+        
         .user-bubble { background-color: #dcf8c6; margin-left: auto; }
         .other-bubble { background-color: #ffffff; margin-right: auto; }
-        #chat-window::-webkit-scrollbar { width: 6px; }
-        #chat-window::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px;}
+        
+        #chat-window::-webkit-scrollbar { width: 4px; }
+        #chat-window::-webkit-scrollbar-thumb { 
+            background-color: rgba(0,0,0,0.2); 
+            border-radius: 2px;
+        }
+        
         .admin-tick { color: #1DA1F2; }
-        .message-options { opacity: 0; transition: opacity 0.2s ease-in-out; pointer-events: none; }
-        .group:hover .message-options { opacity: 1; pointer-events: auto; }
+        
+        .message-options { 
+            opacity: 0; 
+            transition: opacity 0.2s ease-in-out; 
+            pointer-events: none; 
+        }
+        
+        .group:hover .message-options { 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        
         .reaction { transition: transform 0.1s ease; }
         .reaction:hover { transform: scale(1.3); }
-        .reaction-pill { background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px); }
+        .reaction-pill { 
+            background-color: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(5px); 
+        }
+        
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
+            .chat-bubble { 
+                max-width: 90%; 
+                font-size: 14px;
+                padding: 6px 10px;
+            }
+            
+            .message-options {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            
+            .message-options button {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            /* Handle mobile keyboard */
+            .mobile-keyboard-active {
+                padding-bottom: 0;
+            }
+            
+            .mobile-keyboard-active #chat-window {
+                padding-bottom: 20px;
+            }
+            
+            /* Prevent zoom on input focus */
+            input[type="text"] {
+                font-size: 16px;
+            }
+        }
+        
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .chat-bubble { 
+                max-width: 70%; 
+                font-size: 15px;
+            }
+            
+            body {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Prevent text selection on messages */
+        .chat-bubble, .chat-bubble * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        /* Allow text selection only on links */
+        .chat-bubble a {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Responsive modal */
+        .modal-content {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px;
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-200">
 
-<div x-data="{ userProfileModal: false, selectedUser: {}, reactionPicker: { visible: false, messageId: null, top: 0, left: 0 } }" @keydown.escape.window="reactionPicker.visible = false; userProfileModal = false" class="w-full h-full flex flex-col">
+<div x-data="{ 
+    userProfileModal: false, 
+    selectedUser: {}, 
+    reactionPicker: { visible: false, messageId: null, top: 0, left: 0 },
+    isKeyboardActive: false
+}" 
+@keydown.escape.window="reactionPicker.visible = false; userProfileModal = false" 
+:class="{ 'mobile-keyboard-active': isKeyboardActive }"
+class="w-full h-full flex flex-col">
+
     <!-- Header -->
-    <header class="bg-[#003B5C] text-white shadow-md z-40 flex items-center p-3 flex-shrink-0">
-        <a href="index.html" class="mr-4 text-white hover:bg-white/20 rounded-full p-2"><i class="fas fa-arrow-left"></i></a>
-        <i class="fas fa-users text-2xl mr-3"></i>
+    <header class="bg-[#003B5C] text-white shadow-md z-40 flex items-center p-3 sm:p-4 flex-shrink-0">
+        <a href="index.html" class="mr-3 sm:mr-4 text-white hover:bg-white/20 rounded-full p-2"><i class="fas fa-arrow-left text-sm sm:text-base"></i></a>
+        <i class="fas fa-users text-lg sm:text-2xl mr-2 sm:mr-3"></i>
         <div>
-            <h1 class="text-lg font-bold">IITM BS Group</h1>
+            <h1 class="text-base sm:text-lg font-bold">IITM BS Group</h1>
             <p class="text-xs text-green-300">Welcome to the community</p>
         </div>
     </header>
 
     <!-- Chat Window -->
-    <main id="chat-window" class="flex-1 overflow-y-auto p-2 sm:p-4">
+    <main id="chat-window" class="flex-1 overflow-y-auto p-2 sm:p-4 pb-2">
         <!-- Messages will be loaded here -->
     </main>
     
     <!-- Message Input Form -->
-    <footer class="bg-gray-100 p-3 flex-shrink-0 border-t">
-        <form id="chat-form" class="flex items-center space-x-3">
-            <button type="button" id="file-upload-btn" class="text-gray-500 hover:text-[#005a8b] w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-paperclip text-xl"></i>
+    <footer class="bg-gray-100 p-2 sm:p-3 flex-shrink-0 border-t">
+        <form id="chat-form" class="flex items-center space-x-2 sm:space-x-3">
+            <button type="button" id="file-upload-btn" class="text-gray-500 hover:text-[#005a8b] w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-paperclip text-lg sm:text-xl"></i>
             </button>
             <input type="file" id="file-input" class="hidden" accept="image/*,application/pdf">
-            <input type="text" id="message-input" placeholder="Type a message..." class="flex-1 p-3 border bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#f17922]" autocomplete="off">
-            <button type="submit" id="send-btn" class="bg-[#005a8b] text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-[#003B5C] transition-colors flex-shrink-0">
-                <i id="send-icon" class="fas fa-paper-plane text-xl"></i>
-                 <div id="send-spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <input type="text" id="message-input" placeholder="Type a message..." 
+                   class="flex-1 p-2 sm:p-3 border bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#f17922] text-sm sm:text-base" 
+                   autocomplete="off">
+            <button type="submit" id="send-btn" class="bg-[#005a8b] text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center hover:bg-[#003B5C] transition-colors flex-shrink-0">
+                <i id="send-icon" class="fas fa-paper-plane text-sm sm:text-xl"></i>
+                <div id="send-spinner" class="hidden w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             </button>
         </form>
     </footer>
 
-    <!-- Modals and Popovers -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-lg text-center shadow-xl">
-            <h2 class="text-2xl font-bold mb-4">Login Required</h2>
-            <p class="mb-6">You need to be logged in to join the chat.</p>
-            <a href="login.html" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Go to Login</a>
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-white p-6 sm:p-8 rounded-lg text-center shadow-xl">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4">Login Required</h2>
+            <p class="mb-6 text-sm sm:text-base">You need to be logged in to join the chat.</p>
+            <a href="login.html" class="bg-blue-600 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base">Go to Login</a>
         </div>
     </div>
 
-    <div x-show="userProfileModal" @click.away="userProfileModal = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-80">
+    <!-- User Profile Modal -->
+    <div x-show="userProfileModal" @click.away="userProfileModal = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-white p-4 sm:p-6 rounded-lg shadow-xl">
             <div class="flex flex-col items-center">
-                <img :src="selectedUser.avatar" class="w-24 h-24 rounded-full mb-4 border-4" :class="selectedUser.isAdmin ? 'border-blue-500' : 'border-gray-300'">
+                <img :src="selectedUser.avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full mb-4 border-4" :class="selectedUser.isAdmin ? 'border-blue-500' : 'border-gray-300'">
                 <div class="flex items-center">
-                    <h2 class="text-2xl font-bold" x-text="selectedUser.name"></h2>
-                    <i x-show="selectedUser.isAdmin" class="fas fa-check-circle admin-tick ml-2" title="Admin"></i>
+                    <h2 class="text-lg sm:text-2xl font-bold" x-text="selectedUser.name"></h2>
+                    <i x-show="selectedUser.isAdmin" class="fas fa-check-circle admin-tick ml-2 text-sm sm:text-base" title="Admin"></i>
                 </div>
-                <p class="text-gray-500" x-text="selectedUser.email"></p>
+                <p class="text-gray-500 text-sm sm:text-base" x-text="selectedUser.email"></p>
             </div>
             <div id="admin-controls" class="hidden mt-4 pt-4 border-t space-y-2">
                 <h3 class="text-xs uppercase font-bold text-gray-500">Admin Actions</h3>
-                <button class="w-full text-left p-2 rounded hover:bg-red-100 text-red-600"><i class="fas fa-ban mr-2"></i>Ban User</button>
+                <button class="w-full text-left p-2 rounded hover:bg-red-100 text-red-600 text-sm"><i class="fas fa-ban mr-2"></i>Ban User</button>
             </div>
         </div>
     </div>
@@ -94,13 +232,13 @@
     <!-- Reaction Picker -->
     <div x-show="reactionPicker.visible" x-cloak @click.away="reactionPicker.visible = false"
          :style="`top: ${reactionPicker.top}px; left: ${reactionPicker.left}px`"
-         class="fixed bg-white rounded-full shadow-lg p-1 flex space-x-2 z-50">
-        <span @click="reactToMessage(reactionPicker.messageId, '👍'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">👍</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '❤️'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">❤️</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😂'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">😂</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😮'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">😮</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '😢'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">😢</span>
-        <span @click="reactToMessage(reactionPicker.messageId, '🙏'); reactionPicker.visible = false" class="reaction text-2xl cursor-pointer">🙏</span>
+         class="fixed bg-white rounded-full shadow-lg p-1 flex space-x-1 sm:space-x-2 z-50 text-lg sm:text-2xl">
+        <span @click="reactToMessage(reactionPicker.messageId, '👍'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">👍</span>
+        <span @click="reactToMessage(reactionPicker.messageId, '❤️'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">❤️</span>
+        <span @click="reactToMessage(reactionPicker.messageId, '😂'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😂</span>
+        <span @click="reactToMessage(reactionPicker.messageId, '😮'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😮</span>
+        <span @click="reactToMessage(reactionPicker.messageId, '😢'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">😢</span>
+        <span @click="reactToMessage(reactionPicker.messageId, '🙏'); reactionPicker.visible = false" class="reaction cursor-pointer p-1">🙏</span>
     </div>
 </div>
 
@@ -130,6 +268,34 @@
 
     let currentUser = null;
 
+    // Mobile keyboard handling
+    const alpineComponent = document.querySelector('[x-data]').__x;
+    
+    // Handle mobile keyboard show/hide
+    messageInput.addEventListener('focus', () => {
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                alpineComponent.isKeyboardActive = true;
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }, 300);
+        }
+    });
+
+    messageInput.addEventListener('blur', () => {
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                alpineComponent.isKeyboardActive = false;
+            }, 300);
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            alpineComponent.isKeyboardActive = false;
+        }
+    });
+
     function renderMessage(doc) {
         const data = doc.data();
         const isCurrentUser = data.uid === currentUser.uid;
@@ -139,14 +305,23 @@
         let messageContentHTML = '';
         if (data.type === 'image') {
             messageContentHTML = `
-                <a href="${data.fileUrl}" target="_blank" class="block mt-1 max-w-xs rounded-lg overflow-hidden" style="max-height: 400px;">
+                <a href="${data.fileUrl}" target="_blank" class="block mt-1 max-w-xs rounded-lg overflow-hidden" style="max-height: 300px;">
                     <img src="${data.fileUrl}" class="w-full h-full object-cover" alt="Shared image">
                 </a>`;
         } 
-        else if (data.type === 'pdf') { messageContentHTML = `<a href="${data.fileUrl}" target="_blank" class="flex items-center bg-gray-200/50 p-2 rounded-lg hover:bg-gray-300/50 mt-1"><i class="fas fa-file-pdf text-red-500 text-3xl mr-3"></i><p class="font-semibold text-sm break-all">${data.fileName}</p></a>`; }
-        else { messageContentHTML = `<p class="break-words">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`; }
+        else if (data.type === 'pdf') { 
+            messageContentHTML = `<a href="${data.fileUrl}" target="_blank" class="flex items-center bg-gray-200/50 p-2 rounded-lg hover:bg-gray-300/50 mt-1">
+                <i class="fas fa-file-pdf text-red-500 text-2xl sm:text-3xl mr-2 sm:mr-3"></i>
+                <p class="font-semibold text-xs sm:text-sm break-all">${data.fileName}</p>
+            </a>`; 
+        }
+        else { 
+            messageContentHTML = `<p class="break-words text-sm sm:text-base">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`; 
+        }
         
-        const reactionsHTML = data.reactions ? Object.entries(data.reactions).map(([emoji, uids]) => uids.length > 0 ? `<div class="reaction-pill px-2 py-0.5 rounded-full text-sm flex items-center gap-1">${emoji}<span>${uids.length}</span></div>` : '').join('') : '';
+        const reactionsHTML = data.reactions ? Object.entries(data.reactions).map(([emoji, uids]) => 
+            uids.length > 0 ? `<div class="reaction-pill px-2 py-0.5 rounded-full text-xs sm:text-sm flex items-center gap-1">${emoji}<span>${uids.length}</span></div>` : ''
+        ).join('') : '';
         
         const nameLineHTML = `
             <div class="flex items-center gap-1.5 mb-1">
@@ -157,27 +332,27 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = `flex items-start gap-2 my-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`;
         
+        const avatarSize = window.innerWidth <= 768 ? 'w-8 h-8' : 'w-10 h-10';
+        
         messageDiv.innerHTML = `
-            ${!isCurrentUser ? `<img src="${avatar}" class="w-10 h-10 rounded-full cursor-pointer flex-shrink-0" data-uid="${data.uid}" data-name="${data.userName}" data-email="${data.email}" data-avatar="${avatar}" data-is-admin="${isAdmin}">` : ''}
+            ${!isCurrentUser ? `<img src="${avatar}" class="${avatarSize} rounded-full cursor-pointer flex-shrink-0" data-uid="${data.uid}" data-name="${data.userName}" data-email="${data.email}" data-avatar="${avatar}" data-is-admin="${isAdmin}">` : ''}
             <div class="flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}">
                 <div class="group relative">
                     <div class="${isCurrentUser ? 'user-bubble' : 'other-bubble'} chat-bubble">
                         ${!isCurrentUser ? nameLineHTML : ''}
                         ${messageContentHTML}
                     </div>
-                    <!-- Reactions -->
                     ${reactionsHTML ? `<div class="flex gap-1 mt-1 ${isCurrentUser ? 'justify-end' : 'justify-start'}">${reactionsHTML}</div>` : ''}
-                    <!-- Message Options -->
-                    <div class="message-options absolute top-0 ${isCurrentUser ? 'left-0 -translate-x-full' : 'right-0 translate-x-full'} h-full flex items-center px-2">
+                    <div class="message-options absolute top-0 ${isCurrentUser ? 'left-0 -translate-x-full' : 'right-0 translate-x-full'} h-full flex items-center px-1 sm:px-2">
                          <div class="bg-white rounded-full shadow-md flex">
-                            <button class="p-2 text-gray-600 hover:text-blue-500" data-action="react" data-id="${doc.id}"><i class="fas fa-smile"></i></button>
-                            ${isCurrentUser ? `<button class="p-2 text-gray-600 hover:text-red-500" data-action="delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>` : ''}
+                            <button class="p-1 sm:p-2 text-gray-600 hover:text-blue-500 text-xs sm:text-sm" data-action="react" data-id="${doc.id}"><i class="fas fa-smile"></i></button>
+                            ${isCurrentUser ? `<button class="p-1 sm:p-2 text-gray-600 hover:text-red-500 text-xs sm:text-sm" data-action="delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>` : ''}
                          </div>
                     </div>
                 </div>
                 <p class="text-xs text-gray-500 px-2 mt-1">${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''}</p>
             </div>
-            ${isCurrentUser ? `<img src="${avatar}" class="w-10 h-10 rounded-full cursor-pointer flex-shrink-0" data-uid="${data.uid}" data-name="${data.userName}" data-email="${data.email}" data-avatar="${avatar}" data-is-admin="${isAdmin}">` : ''}
+            ${isCurrentUser ? `<img src="${avatar}" class="${avatarSize} rounded-full cursor-pointer flex-shrink-0" data-uid="${data.uid}" data-name="${data.userName}" data-email="${data.email}" data-avatar="${avatar}" data-is-admin="${isAdmin}">` : ''}
         `;
 
         chatWindow.appendChild(messageDiv);
@@ -190,22 +365,32 @@
             const name = user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1);
             const initial = name.charAt(0).toUpperCase();
             
-            currentUser = { uid: user.uid, email: user.email, name: name, avatar: isAdmin ? 'https://i.ibb.co/pBHKw6nn/Picsart-25-04-17-15-09-20-787-1.jpg' : `https://placehold.co/100x100/f17922/FFFFFF?text=${initial}`, isAdmin: isAdmin };
+            currentUser = { 
+                uid: user.uid, 
+                email: user.email, 
+                name: name, 
+                avatar: isAdmin ? 'https://i.ibb.co/pBHKw6nn/Picsart-25-04-17-15-09-20-787-1.jpg' : `https://placehold.co/100x100/f17922/FFFFFF?text=${initial}`, 
+                isAdmin: isAdmin 
+            };
 
             onSnapshot(query(collection(db, "group_chat"), orderBy("timestamp")), (snapshot) => {
                 const scrollTop = chatWindow.scrollTop;
                 const scrollHeight = chatWindow.scrollHeight;
                 const clientHeight = chatWindow.clientHeight;
-                const isScrolledToBottom = scrollHeight - scrollTop === clientHeight;
+                const isScrolledToBottom = scrollHeight - scrollTop <= clientHeight + 50;
 
                 chatWindow.innerHTML = '';
                 snapshot.forEach(renderMessage);
 
-                if(isScrolledToBottom) {
-                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                if(isScrolledToBottom || snapshot.docChanges().some(change => change.type === 'added')) {
+                    setTimeout(() => {
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                    }, 100);
                 }
             });
-        } else { loginModal.classList.remove('hidden'); }
+        } else { 
+            loginModal.classList.remove('hidden'); 
+        }
     });
 
     chatForm.addEventListener('submit', async e => {
@@ -213,24 +398,58 @@
         const text = messageInput.value.trim();
         if (text && currentUser) {
             messageInput.value = '';
-            await addDoc(collection(db, "group_chat"), { text: text, type: 'text', uid: currentUser.uid, email: currentUser.email, userName: currentUser.name, userAvatar: currentUser.avatar, timestamp: serverTimestamp(), reactions: {} });
+            await addDoc(collection(db, "group_chat"), { 
+                text: text, 
+                type: 'text', 
+                uid: currentUser.uid, 
+                email: currentUser.email, 
+                userName: currentUser.name, 
+                userAvatar: currentUser.avatar, 
+                timestamp: serverTimestamp(), 
+                reactions: {} 
+            });
+            
+           // Auto scroll to bottom after sending message
+            setTimeout(() => {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }, 100);
         }
     });
     
     fileUploadBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', async e => {
-        const file = e.target.files[0]; if (!file) return;
+        const file = e.target.files[0]; 
+        if (!file) return;
         toggleLoading(true);
-        const formData = new FormData(); formData.append('image', file);
+        const formData = new FormData(); 
+        formData.append('image', file);
         try {
             const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
             const result = await res.json();
             if (result.success) {
                 const fileType = file.type.startsWith('image/') ? 'image' : 'pdf';
-                await addDoc(collection(db, "group_chat"), { type: fileType, fileUrl: result.data.url, fileName: file.name, uid: currentUser.uid, email: currentUser.email, userName: currentUser.name, userAvatar: currentUser.avatar, timestamp: serverTimestamp(), reactions: {} });
-            } else { alert('File upload failed: ' + result.error.message); }
-        } catch (error) { console.error('Upload Error:', error); alert('An error occurred during upload.'); }
-        finally { toggleLoading(false); fileInput.value = ''; }
+                await addDoc(collection(db, "group_chat"), { 
+                    type: fileType, 
+                    fileUrl: result.data.url, 
+                    fileName: file.name, 
+                    uid: currentUser.uid, 
+                    email: currentUser.email, 
+                    userName: currentUser.name, 
+                    userAvatar: currentUser.avatar, 
+                    timestamp: serverTimestamp(), 
+                    reactions: {} 
+                });
+            } else { 
+                alert('File upload failed: ' + result.error.message); 
+            }
+        } catch (error) { 
+            console.error('Upload Error:', error); 
+            alert('An error occurred during upload.'); 
+        }
+        finally { 
+            toggleLoading(false); 
+            fileInput.value = ''; 
+        }
     });
     
     function toggleLoading(isLoading) {
@@ -240,7 +459,6 @@
         fileUploadBtn.disabled = isLoading;
     }
     
-    // --- Actions (Delete, React, Profile) ---
     window.reactToMessage = async (messageId, emoji) => {
         if (!currentUser) return;
         const messageRef = doc(db, 'group_chat', messageId);
@@ -250,14 +468,12 @@
         const data = messageSnap.data();
         const reactions = data.reactions || {};
         
-        // Remove user from any other reaction
         for(const key in reactions) {
             if(key !== emoji) {
                 reactions[key] = reactions[key]?.filter(uid => uid !== currentUser.uid);
             }
         }
         
-        // Add or remove from current reaction
         if (reactions[emoji] && reactions[emoji].includes(currentUser.uid)) {
             reactions[emoji] = reactions[emoji].filter(uid => uid !== currentUser.uid);
         } else {
@@ -291,11 +507,19 @@
         }
         if (action === 'react') {
             const rect = target.getBoundingClientRect();
+            const windowWidth = window.innerWidth;
+            const pickerWidth = 200;
+            let left = rect.left - (pickerWidth / 2);
+            
+            // Adjust position for mobile screens
+            if (left < 10) left = 10;
+            if (left + pickerWidth > windowWidth - 10) left = windowWidth - pickerWidth - 10;
+            
             alpineComponent.reactionPicker = {
                 visible: true,
                 messageId: messageId,
-                top: rect.top - 50,
-                left: rect.left - (rect.width / 2) - 80
+                top: rect.top - 60,
+                left: left
             };
         }
     });
@@ -304,7 +528,13 @@
         if(e.target.matches('[data-uid]')) {
             const el = e.target;
             const alpineComponent = e.target.closest('[x-data]').__x;
-            alpineComponent.selectedUser = { uid: el.dataset.uid, name: el.dataset.name, email: el.dataset.email, avatar: el.dataset.avatar, isAdmin: el.dataset.isAdmin === 'true' };
+            alpineComponent.selectedUser = { 
+                uid: el.dataset.uid, 
+                name: el.dataset.name, 
+                email: el.dataset.email, 
+                avatar: el.dataset.avatar, 
+                isAdmin: el.dataset.isAdmin === 'true' 
+            };
             adminControls.style.display = currentUser.isAdmin ? 'block' : 'none';
             alpineComponent.userProfileModal = true;
         }
@@ -312,5 +542,3 @@
 </script>
 </body>
 </html>
-
-

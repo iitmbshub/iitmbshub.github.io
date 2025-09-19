@@ -1,602 +1,208 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>IITM BS HUB - PYQs</title>
-
-    <!-- Tailwind CSS CDN -->
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Poppins -->
-
+    <title>IITM BS Hub - Assignments & PYQs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome for Icons -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Alpine.js for UI interactivity -->
-
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
+        :root {
+            --primary-color: #800000; /* Maroon */
+            --background-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --header-text: #fff;
+            --border-color: #e0e0e0;
+        }
         body {
-
-            font-family: 'Poppins', sans-serif;
-
-            background-color: #001f3f; /* Dark Navy Background */
-
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
         }
-
-        .glass-card {
-
-            background: rgba(255, 255, 255, 0.05);
-
-            backdrop-filter: blur(20px);
-
-            -webkit-backdrop-filter: blur(20px);
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            border-radius: 20px;
-
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px Gg30px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
-
-        .hero-section {
-
-            background: linear-gradient(135deg, #003B5C 0%, #005a8b 100%);
-
+        .header {
+            background-color: var(--primary-color);
+            color: var(--header-text);
+            padding: 2rem;
+            text-align: center;
         }
-
-        
-
-        .table-container::-webkit-scrollbar {
-
-            height: 8px;
-
+        .header h1 { margin: 0; font-size: 2.5rem; }
+        .content-section {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .table-container::-webkit-scrollbar-thumb {
-
-            background-color: rgba(241, 121, 34, 0.6);
-
-            border-radius: 10px;
-
+        .content-section:last-child { border-bottom: none; }
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
-
-        .table-container::-webkit-scrollbar-track {
-
-            background-color: rgba(255, 255, 255, 0.1);
-
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-
-
-
-        @keyframes fadeInUp {
-
-            from {
-
-                opacity: 0;
-
-                transform: translateY(20px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform: translateY(0);
-
-            }
-
+        .data-table th, .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
-
-
-
-        .fade-in-up {
-
-            animation: fadeInUp 0.5s ease-out forwards;
-
+        .data-table thead th {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
         }
-
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover { background-color: var(--background-color); }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: var(--header-text);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(128,0,0,0.3);
+        }
+        .status-message {
+            text-align: center;
+            padding: 2rem 0;
+            font-size: 1.1rem;
+            color: #777;
+        }
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .content-section { padding: 1.5rem 1rem; }
+        }
     </style>
-
 </head>
+<body>
 
-<body class="text-white">
-
-
-
-    <!-- Header -->
-
-    <header class="bg-white/5 backdrop-blur-md shadow-lg sticky top-0 z-40" x-data="{ isProfileOpen: false }">
-
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-
-             <!-- Logo and Title -->
-
-            <a href="index.html" class="flex items-center space-x-3">
-
-                <img src="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" alt="IITM BS Hub Logo" class="h-10 w-10">
-
-                <span class="text-xl font-bold text-white hidden sm:block">IITM BS HUB</span>
-
-            </a>
-
-
-
-            <!-- User Avatar / Login Button -->
-
-            <div class="relative">
-
-                <!-- Login Button (Logged out state) -->
-
-                <a href="login.html" id="login-button" class="hidden bg-[#f17922] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#d96817] transition-colors">
-
-                    Login
-
-                </a>
-
-
-
-                <!-- User Avatar (Logged in state) -->
-
-                <div id="user-avatar-area" class="hidden">
-
-                    <button @click="isProfileOpen = !isProfileOpen" class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#f17922] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-
-                        <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" id="user-avatar-img">
-
-                    </button>
-
-                    
-
-                    <!-- Dropdown Menu -->
-
-                    <div x-show="isProfileOpen" @click.away="isProfileOpen = false" x-transition class="absolute right-0 mt-2 w-72 bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-2xl py-2 z-50 border border-white/10">
-
-                        <div class="flex items-center px-4 py-3 border-b border-white/10">
-
-                            <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" class="h-12 w-12 rounded-full mr-3" id="dropdown-user-img">
-
-                            <div>
-
-                                <p class="font-semibold text-white text-lg" id="user-name">Guest User</p>
-
-                                <p class="text-sm text-gray-400 truncate" id="user-email">email@example.com</p>
-
-                            </div>
-
-                        </div>
-
-                        <a href="#" id="logout-button" class="flex items-center w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/20">
-
-                            <i class="fas fa-sign-out-alt w-5 mr-3"></i>Logout
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+    <div class="container">
+        <div class="header">
+            <h1>Assignments & PYQs</h1>
         </div>
 
-    </header>
-
-
-
-    <!-- Main Content -->
-
-    <main>
-
-        <!-- Hero Section -->
-
-        <section class="hero-section">
-
-            <div class="container mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24 text-center">
-
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-3 tracking-tight">Previous Year Questions</h1>
-
-                <p class="text-lg text-white/80 max-w-2xl mx-auto">Ace your exams by practicing with our extensive collection of past question papers.</p>
-
+        <div class="content-section">
+            <h2><i class="fas fa-check-double"></i>Graded Assignment Solutions</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Week</th>
+                        <th>Solution</th>
+                    </tr>
+                </thead>
+                <tbody id="solutions-table-body"></tbody>
+            </table>
+            <div id="solutions-status" class="status-message">
+                <i class="fas fa-spinner fa-spin"></i> Loading Solutions...
             </div>
-
-        </section>
-
-
-
-        <!-- PYQs Container -->
-
-        <div id="pyq-container" class="container mx-auto p-4 md:p-6 lg:p-8 -mt-12 space-y-10">
-
-            <!-- Initial Loading State -->
-
-            <div class="text-center py-10">
-
-                <div class="w-12 h-12 border-4 border-t-[#f17922] border-white/20 rounded-full animate-spin mx-auto"></div>
-
-                <p class="mt-4 text-gray-300">Loading PYQs...</p>
-
-            </div>
-
         </div>
 
-    </main>
-
-    
-
-    <!-- Floating Chat Button -->
-
-    <a href="chat.html" class="fixed bottom-6 right-6 bg-gradient-to-tr from-[#f17922] to-[#f5a623] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transform hover:scale-110 transition-transform duration-300">
-
-        <i class="fas fa-comments text-2xl"></i>
-
-    </a>
-
-
-
-    <!-- Footer -->
-
-    <footer class="bg-gray-900/50 mt-12 py-6 border-t border-white/10">
-
-        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
-
-             A WEBSITE BY 
-
-            <a href="https://raodevlopers.xyz" target="_blank" rel="noopener noreferrer" class="font-bold text-[#f17922] hover:underline">
-
-                RAO DEVELOPERS
-
-            </a>
-
+        <div class="content-section">
+            <h2><i class="fas fa-file-alt"></i>Previous Year Questions (PYQ)</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Exam Date</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="pyq-table-body"></tbody>
+            </table>
+            <div id="pyq-status" class="status-message">
+                <i class="fas fa-spinner fa-spin"></i> Loading PYQs...
+            </div>
         </div>
+    </div>
 
-    </footer>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-
-
-    <!-- Firebase SDK -->
-
-    <script type="module">
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-
-
+    <script>
         const firebaseConfig = {
-
             apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY",
-
             authDomain: "iitm-74779.firebaseapp.com",
-
             projectId: "iitm-74779",
-
-            storageBucket: "iitm-74779.appspot.com",
-
+            storageBucket: "iitm-74779.firebasestorage.app",
             messagingSenderId: "49030766593",
-
             appId: "1:49030766593:web:99b7eae829f4af82556000"
-
         };
 
-
-
-        const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
-        const db = getFirestore(app);
-
-
-
-        const loginButton = document.getElementById('login-button');
-
-        const userAvatarArea = document.getElementById('user-avatar-area');
-
-        const logoutButton = document.getElementById('logout-button');
-
-        const userNameEl = document.getElementById('user-name');
-
-        const userEmailEl = document.getElementById('user-email');
-
-        const pyqContainer = document.getElementById('pyq-container');
-
-        
-
-        // --- Function to fetch and render PYQs from Firestore ---
-
-        async function fetchAndRenderPYQs() {
-
-            if (!pyqContainer) return;
-
-            
-
-            try {
-
-                // 1. Fetch data from your 'pyq_topics' collection in Firestore.
-
-                const pyqCollectionRef = collection(db, "pyq_topics"); 
-
-                const q = query(pyqCollectionRef, orderBy("year", "desc")); // Order by year
-
-                const querySnapshot = await getDocs(q);
-
-
-
-                const pyqData = [];
-
-                for (const doc of querySnapshot.docs) {
-
-                    const topicData = { id: doc.id, ...doc.data(), papers: [] };
-
-                    
-
-                    // For each topic, fetch the papers inside its subcollection
-
-                    const papersSubcollectionRef = collection(db, `pyq_topics/${doc.id}/papers`);
-
-                    const papersSnapshot = await getDocs(papersSubcollectionRef);
-
-                    papersSnapshot.forEach(paperDoc => {
-
-                         topicData.papers.push({ id: paperDoc.id, ...paperDoc.data() });
-
-                    });
-
-                    pyqData.push(topicData);
-
-                }
-
-
-
-                if (pyqData.length === 0) {
-
-                     pyqContainer.innerHTML = `
-
-                        <div class="text-center py-10 glass-card">
-
-                           <i class="fas fa-file-circle-xmark text-5xl text-[#f17922]"></i>
-
-                           <h2 class="mt-4 text-2xl font-bold">No PYQs Found</h2>
-
-                           <p class="text-gray-300">Question papers will appear here once added by the admin.</p>
-
-                        </div>
-
-                     `;
-
-                     return;
-
-                }
-
-
-
-                pyqContainer.innerHTML = ''; // Clear loading spinner
-
-
-
-                // 2. Render the fetched data
-
-                pyqData.forEach((section, index) => {
-
-                    let tableRows = '';
-
-                    section.papers.forEach(paper => {
-
-                        tableRows += `
-
-                            <tr class="border-b border-white/10 hover:bg-white/10">
-
-                                <td class="px-6 py-4 font-semibold">${paper.subject || 'N/A'}</td>
-
-                                <td class="px-6 py-4 text-gray-300">${paper.examType || 'N/A'}</td>
-
-                                <td class="px-6 py-4 text-gray-300">${paper.testDate || 'N/A'}</td>
-
-                                <td class="px-6 py-4 text-right">
-
-                                    <a href="${paper.link || '#'}" download class="bg-[#f17922] text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-[#d96817] transition-colors inline-flex items-center">
-
-                                        <i class="fas fa-download mr-2"></i>Download
-
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        `;
-
-                    });
-
-
-
-                    const sectionHtml = `
-
-                        <section class="glass-card fade-in-up" style="animation-delay: ${index * 100}ms;">
-
-                            <div class="p-5 md:p-6 border-b border-white/10">
-
-                                <h2 class="text-2xl font-bold flex items-center">
-
-                                    <i class="fas fa-calendar-alt mr-4 text-[#f17922]"></i>${section.term || 'Untitled Term'}
-
-                                </h2>
-
-                            </div>
-
-                            <div class="overflow-x-auto table-container">
-
-                                <table class="w-full text-sm text-left">
-
-                                    <thead class="text-xs text-gray-300 uppercase bg-white/5">
-
-                                        <tr>
-
-                                            <th scope="col" class="px-6 py-3">Subject</th>
-
-                                            <th scope="col" class="px-6 py-3">Exam Type</th>
-
-                                            <th scope="col" class="px-6 py-3">Test Date</th>
-
-                                            <th scope="col" class="px-6 py-3"><span class="sr-only">Download</span></th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        ${tableRows.length > 0 ? tableRows : '<tr><td colspan="4" class="text-center p-4 text-gray-400">No papers in this section yet.</td></tr>'}
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        </section>
-
-                    `;
-
-                    pyqContainer.innerHTML += sectionHtml;
-
-                });
-
-
-
-            } catch (error) {
-
-                console.error("Error fetching PYQs:", error);
-
-                pyqContainer.innerHTML = `
-
-                    <div class="text-center py-10 glass-card">
-
-                       <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-
-                       <h2 class="mt-4 text-2xl font-bold">Failed to Load PYQs</h2>
-
-                       <p class="text-gray-300">There was an error connecting to the database. Please try again later.</p>
-
-                    </div>
-
-                `;
-
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- Fetch Graded Assignment Solutions ---
+        const solutionsTable = document.getElementById('solutions-table-body');
+        const solutionsStatus = document.getElementById('solutions-status');
+
+        db.collection("graded_solutions").orderBy("week").onSnapshot((querySnapshot) => {
+            solutionsTable.innerHTML = '';
+            if (querySnapshot.empty) {
+                solutionsStatus.innerHTML = '<i class="fas fa-info-circle"></i> No solutions available.';
+                solutionsStatus.style.display = 'block';
+                return;
             }
-
-        }
-
-
-
-        // --- Auth State Management ---
-
-        onAuthStateChanged(auth, user => {
-
-            if (user) {
-
-                loginButton.classList.add('hidden');
-
-                userAvatarArea.classList.remove('hidden');
-
-                
-
-                userEmailEl.textContent = user.email;
-
-
-
-                if (user.email) {
-
-                    const nameFromEmail = user.email.split('@')[0];
-
-                    const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
-
-                    userNameEl.textContent = formattedName;
-
-                } else {
-
-                    userNameEl.textContent = "User";
-
-                }
-
-
-
-                const initial = userNameEl.textContent.charAt(0).toUpperCase();
-
-                const avatarUrl = `https://placehold.co/100x100/f17922/FFFFFF?text=${initial}`;
-
-                document.getElementById('user-avatar-img').src = avatarUrl;
-
-                document.getElementById('dropdown-user-img').src = avatarUrl;
-
-            } else {
-
-                loginButton.classList.remove('hidden');
-
-                userAvatarArea.classList.add('hidden');
-
-            }
-
-        });
-
-
-
-        // --- Logout Functionality ---
-
-        logoutButton.addEventListener('click', (e) => {
-
-            e.preventDefault();
-
-            signOut(auth).then(() => {
-
-                window.location.href = 'login.html';
-
-            }).catch((error) => {
-
-                console.error("Logout Error:", error);
-
-                alert("Failed to logout. Please try again.");
-
+            solutionsStatus.style.display = 'none';
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                const row = `<tr>
+                    <td>${data.subject}</td>
+                    <td>${data.week}</td>
+                    <td><a href="${data.solutionLink}" class="action-btn" target="_blank" rel="noopener noreferrer"><i class="fas fa-eye"></i> View Solution</a></td>
+                </tr>`;
+                solutionsTable.innerHTML += row;
             });
-
         });
 
+        // --- Fetch Previous Year Questions ---
+        const pyqTable = document.getElementById('pyq-table-body');
+        const pyqStatus = document.getElementById('pyq-status');
 
-
-        // --- Initial Data Load ---
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            fetchAndRenderPYQs();
-
+        db.collection("pyqs").orderBy("year", "desc").onSnapshot((querySnapshot) => {
+            pyqTable.innerHTML = '';
+            if (querySnapshot.empty) {
+                pyqStatus.innerHTML = '<i class="fas fa-info-circle"></i> No PYQs available.';
+                pyqStatus.style.display = 'block';
+                return;
+            }
+            pyqStatus.style.display = 'none';
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                const row = `<tr>
+                    <td>${data.year}</td>
+                    <td>${data.examDate}</td>
+                    <td><a href="${data.downloadLink}" class="action-btn" target="_blank" rel="noopener noreferrer"><i class="fas fa-download"></i> Download</a></td>
+                </tr>`;
+                pyqTable.innerHTML += row;
+            });
         });
-
     </script>
 
 </body>
-
 </html>
-

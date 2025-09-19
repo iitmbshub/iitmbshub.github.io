@@ -1,610 +1,210 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>IITM BS HUB - Notes</title>
-
-    <!-- Tailwind CSS CDN -->
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Poppins -->
-
+    <title>IITM BS Hub - Notes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome for Icons -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Alpine.js for UI interactivity -->
-
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
+        :root {
+            --primary-color: #800000; /* Maroon */
+            --background-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --header-text: #fff;
+            --border-color: #e0e0e0;
+        }
         body {
-
-            font-family: 'Poppins', sans-serif;
-
-            background-color: #001f3f; /* Dark Navy Background */
-
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
         }
-
-        .glass-card {
-
-            background: rgba(255, 255, 255, 0.05);
-
-            backdrop-filter: blur(20px);
-
-            -webkit-backdrop-filter: blur(20px);
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            border-radius: 20px;
-
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden; /* To keep header border-radius */
         }
-
-        .hero-section {
-
-            background: linear-gradient(135deg, #003B5C 0%, #005a8b 100%);
-
+        .header {
+            background-color: var(--primary-color);
+            color: var(--header-text);
+            padding: 2rem;
+            text-align: center;
         }
-
-        
-
-        .table-container::-webkit-scrollbar {
-
-            height: 8px;
-
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
         }
-
-        .table-container::-webkit-scrollbar-thumb {
-
-            background-color: rgba(241, 121, 34, 0.6);
-
-            border-radius: 10px;
-
+        .header h2 {
+            margin: 0.5rem 0 0;
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
         }
-
-        .table-container::-webkit-scrollbar-track {
-
-            background-color: rgba(255, 255, 255, 0.1);
-
+        .content {
+            padding: 2rem;
         }
-
-
-
-        @keyframes fadeInUp {
-
-            from {
-
-                opacity: 0;
-
-                transform: translateY(20px);
-
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .notes-table th, .notes-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .notes-table thead th {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--primary-color);
+        }
+        .notes-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .notes-table tbody tr:hover {
+            background-color: var(--background-color);
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: var(--header-text);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(128,0,0,0.3);
+        }
+        #status-message {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.1rem;
+            color: #777;
+        }
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { padding: 1.5rem; }
+            .content { padding: 1rem; }
+            .notes-table {
+                display: block;
+                width: 100%;
             }
-
-            to {
-
-                opacity: 1;
-
-                transform: translateY(0);
-
+            .notes-table thead, .notes-table tbody, .notes-table tr {
+                display: block;
             }
-
+            .notes-table thead { display: none; }
+            .notes-table tr {
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 1rem;
+            }
+            .notes-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.8rem 1rem;
+                border-bottom: 1px dashed var(--border-color);
+            }
+            .notes-table td:last-child { border-bottom: none; }
+            .notes-table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                margin-right: 1rem;
+                color: var(--primary-color);
+            }
         }
-
-
-
-        .fade-in-up {
-
-            animation: fadeInUp 0.5s ease-out forwards;
-
-        }
-
     </style>
-
 </head>
+<body>
 
-<body class="text-white">
-
-
-
-    <!-- Header -->
-
-    <header class="bg-white/5 backdrop-blur-md shadow-lg sticky top-0 z-40" x-data="{ isProfileOpen: false }">
-
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-
-             <!-- Logo and Title -->
-
-            <a href="index.html" class="flex items-center space-x-3">
-
-                <img src="https://i.ibb.co/vxp4pdwC/IITM-BS-Hub.png" alt="IITM BS Hub Logo" class="h-10 w-10">
-
-                <span class="text-xl font-bold text-white hidden sm:block">IITM BS HUB</span>
-
-            </a>
-
-
-
-            <!-- User Avatar / Login Button -->
-
-            <div class="relative">
-
-                <!-- Login Button (Logged out state) -->
-
-                <a href="login.html" id="login-button" class="hidden bg-[#f17922] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#d96817] transition-colors">
-
-                    Login
-
-                </a>
-
-
-
-                <!-- User Avatar (Logged in state) -->
-
-                <div id="user-avatar-area" class="hidden">
-
-                    <button @click="isProfileOpen = !isProfileOpen" class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#f17922] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-
-                        <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" id="user-avatar-img">
-
-                    </button>
-
-                    
-
-                    <!-- Dropdown Menu -->
-
-                    <div x-show="isProfileOpen" @click.away="isProfileOpen = false" x-transition class="absolute right-0 mt-2 w-72 bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-2xl py-2 z-50 border border-white/10">
-
-                        <div class="flex items-center px-4 py-3 border-b border-white/10">
-
-                            <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=U" alt="User Avatar" class="h-12 w-12 rounded-full mr-3" id="dropdown-user-img">
-
-                            <div>
-
-                                <p class="font-semibold text-white text-lg" id="user-name">Guest User</p>
-
-                                <p class="text-sm text-gray-400 truncate" id="user-email">email@example.com</p>
-
-                            </div>
-
-                        </div>
-
-                        <a href="#" id="logout-button" class="flex items-center w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/20">
-
-                            <i class="fas fa-sign-out-alt w-5 mr-3"></i>Logout
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+    <div class="container">
+        <div class="header">
+            <h1>IITM BS HUB</h1>
+            <h2>Course Notes</h2>
         </div>
-
-    </header>
-
-
-
-    <!-- Main Content -->
-
-    <main>
-
-        <!-- Hero Section -->
-
-        <section class="hero-section">
-
-            <div class="container mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24 text-center">
-
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-3 tracking-tight">Course Notes</h1>
-
-                <p class="text-lg text-white/80 max-w-2xl mx-auto">Your comprehensive library of notes for every subject and every week. Organized for your success.</p>
-
+        <div class="content">
+            <table class="notes-table">
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Week</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="notes-table-body">
+                    </tbody>
+            </table>
+            <div id="status-message">
+                <i class="fas fa-spinner fa-spin"></i> Loading Notes...
             </div>
-
-        </section>
-
-
-
-        <!-- Notes Container -->
-
-        <div id="notes-container" class="container mx-auto p-4 md:p-6 lg:p-8 -mt-12 space-y-10">
-
-            <!-- Initial Loading State -->
-
-            <div class="text-center py-10">
-
-                <div class="w-12 h-12 border-4 border-t-[#f17922] border-white/20 rounded-full animate-spin mx-auto"></div>
-
-                <p class="mt-4 text-gray-300">Loading notes...</p>
-
-            </div>
-
         </div>
+    </div>
 
-    </main>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    
-
-    <!-- Floating Chat Button -->
-
-    <a href="chat.html" class="fixed bottom-6 right-6 bg-gradient-to-tr from-[#f17922] to-[#f5a623] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transform hover:scale-110 transition-transform duration-300">
-
-        <i class="fas fa-comments text-2xl"></i>
-
-    </a>
-
-
-
-    <!-- Footer -->
-
-    <footer class="bg-gray-900/50 mt-12 py-6 border-t border-white/10">
-
-        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
-
-             A WEBSITE BY 
-
-            <a href="https://raodevlopers.xyz" target="_blank" rel="noopener noreferrer" class="font-bold text-[#f17922] hover:underline">
-
-                RAO DEVELOPERS
-
-            </a>
-
-        </div>
-
-    </footer>
-
-
-
-    <!-- Firebase SDK -->
-
-    <script type="module">
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-
-
+    <script>
         const firebaseConfig = {
-
             apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY",
-
             authDomain: "iitm-74779.firebaseapp.com",
-
             projectId: "iitm-74779",
-
-            storageBucket: "iitm-74779.appspot.com",
-
+            storageBucket: "iitm-74779.firebasestorage.app",
             messagingSenderId: "49030766593",
-
             appId: "1:49030766593:web:99b7eae829f4af82556000"
-
         };
 
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
+        const tableBody = document.getElementById('notes-table-body');
+        const statusMessage = document.getElementById('status-message');
 
-        const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
-        const db = getFirestore(app);
-
-
-
-        const loginButton = document.getElementById('login-button');
-
-        const userAvatarArea = document.getElementById('user-avatar-area');
-
-        const logoutButton = document.getElementById('logout-button');
-
-        const userNameEl = document.getElementById('user-name');
-
-        const userEmailEl = document.getElementById('user-email');
-
-        const notesContainer = document.getElementById('notes-container');
-
-        
-
-        // --- Function to fetch and render notes from Firestore ---
-
-        async function fetchAndRenderNotes() {
-
-            if (!notesContainer) return;
-
+        db.collection("notes").orderBy("week").onSnapshot((querySnapshot) => {
+            if (querySnapshot.empty) {
+                statusMessage.innerHTML = '<i class="fas fa-info-circle"></i> No notes have been added yet.';
+                tableBody.innerHTML = '';
+                return;
+            }
             
-
-            try {
-
-                // 1. Fetch data from your 'notes' collection in Firestore.
-
-                // Make sure your collection is named 'notes' or change the name here.
-
-                const notesCollectionRef = collection(db, "notes_topics"); // Or whatever you name the collection for topics
-
-                const q = query(notesCollectionRef, orderBy("createdAt", "desc")); // Optional: order by creation time
-
-                const querySnapshot = await getDocs(q);
-
-
-
-                const notesData = [];
-
-                for (const doc of querySnapshot.docs) {
-
-                    const topicData = { id: doc.id, ...doc.data(), notes: [] };
-
-                    
-
-                    // For each topic, fetch the notes inside its subcollection
-
-                    const notesSubcollectionRef = collection(db, `notes_topics/${doc.id}/notes`);
-
-                    const notesSnapshot = await getDocs(notesSubcollectionRef);
-
-                    notesSnapshot.forEach(noteDoc => {
-
-                         topicData.notes.push({ id: noteDoc.id, ...noteDoc.data() });
-
-                    });
-
-                    notesData.push(topicData);
-
-                }
-
-
-
-                if (notesData.length === 0) {
-
-                     notesContainer.innerHTML = `
-
-                        <div class="text-center py-10 glass-card">
-
-                           <i class="fas fa-file-circle-xmark text-5xl text-[#f17922]"></i>
-
-                           <h2 class="mt-4 text-2xl font-bold">No Notes Found</h2>
-
-                           <p class="text-gray-300">Notes will appear here once they are added by the admin.</p>
-
-                        </div>
-
-                     `;
-
-                     return;
-
-                }
-
-
-
-                notesContainer.innerHTML = ''; // Clear loading spinner
-
-
-
-                // 2. Render the fetched data
-
-                notesData.forEach((section, index) => {
-
-                    let tableRows = '';
-
-                    section.notes.forEach(note => {
-
-                        tableRows += `
-
-                            <tr class="border-b border-white/10 hover:bg-white/10">
-
-                                <td class="px-6 py-4 font-semibold">${note.subject || 'N/A'}</td>
-
-                                <td class="px-6 py-4 text-gray-300">${note.week || 'N/A'}</td>
-
-                                <td class="px-6 py-4 text-gray-300">${note.title || 'No Title'}</td>
-
-                                <td class="px-6 py-4 text-right">
-
-                                    <a href="${note.link || '#'}" download class="bg-[#f17922] text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-[#d96817] transition-colors inline-flex items-center">
-
-                                        <i class="fas fa-download mr-2"></i>Download
-
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        `;
-
-                    });
-
-
-
-                    const sectionHtml = `
-
-                        <section class="glass-card fade-in-up" style="animation-delay: ${index * 100}ms;">
-
-                            <div class="p-5 md:p-6 border-b border-white/10">
-
-                                <h2 class="text-2xl font-bold flex items-center">
-
-                                    <i class="fas fa-folder-open mr-4 text-[#f17922]"></i>${section.topic || 'Untitled Topic'}
-
-                                </h2>
-
-                            </div>
-
-                            <div class="overflow-x-auto table-container">
-
-                                <table class="w-full text-sm text-left">
-
-                                    <thead class="text-xs text-gray-300 uppercase bg-white/5">
-
-                                        <tr>
-
-                                            <th scope="col" class="px-6 py-3">Subject</th>
-
-                                            <th scope="col" class="px-6 py-3">Week</th>
-
-                                            <th scope="col" class="px-6 py-3">Title / Description</th>
-
-                                            <th scope="col" class="px-6 py-3"><span class="sr-only">Download</span></th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        ${tableRows.length > 0 ? tableRows : '<tr><td colspan="4" class="text-center p-4 text-gray-400">No notes in this section yet.</td></tr>'}
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        </section>
-
-                    `;
-
-                    notesContainer.innerHTML += sectionHtml;
-
-                });
-
-
-
-            } catch (error) {
-
-                console.error("Error fetching notes:", error);
-
-                notesContainer.innerHTML = `
-
-                    <div class="text-center py-10 glass-card">
-
-                       <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-
-                       <h2 class="mt-4 text-2xl font-bold">Failed to Load Notes</h2>
-
-                       <p class="text-gray-300">There was an error connecting to the database. Please try again later.</p>
-
-                    </div>
-
+            statusMessage.style.display = 'none';
+            tableBody.innerHTML = ''; 
+            
+            querySnapshot.forEach((doc) => {
+                const note = doc.data();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="Subject">${note.subject}</td>
+                    <td data-label="Week">${note.week}</td>
+                    <td data-label="Download">
+                        <a href="${note.fileLink}" class="download-btn" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </td>
                 `;
-
-            }
-
-        }
-
-
-
-        // --- Auth State Management ---
-
-        onAuthStateChanged(auth, user => {
-
-            if (user) {
-
-                loginButton.classList.add('hidden');
-
-                userAvatarArea.classList.remove('hidden');
-
-                
-
-                userEmailEl.textContent = user.email;
-
-
-
-                if (user.email) {
-
-                    const nameFromEmail = user.email.split('@')[0];
-
-                    const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
-
-                    userNameEl.textContent = formattedName;
-
-                } else {
-
-                    userNameEl.textContent = "User";
-
-                }
-
-
-
-                const initial = userNameEl.textContent.charAt(0).toUpperCase();
-
-                const avatarUrl = `https://placehold.co/100x100/f17922/FFFFFF?text=${initial}`;
-
-                document.getElementById('user-avatar-img').src = avatarUrl;
-
-                document.getElementById('dropdown-user-img').src = avatarUrl;
-
-            } else {
-
-                loginButton.classList.remove('hidden');
-
-                userAvatarArea.classList.add('hidden');
-
-                // Optional: Redirect to login if not authenticated
-
-                // window.location.href = 'login.html';
-
-            }
-
-        });
-
-
-
-        // --- Logout Functionality ---
-
-        logoutButton.addEventListener('click', (e) => {
-
-            e.preventDefault();
-
-            signOut(auth).then(() => {
-
-                window.location.href = 'login.html';
-
-            }).catch((error) => {
-
-                console.error("Logout Error:", error);
-
-                alert("Failed to logout. Please try again.");
-
+                tableBody.appendChild(row);
             });
-
+        }, (error) => {
+            console.error("Error fetching notes: ", error);
+            statusMessage.textContent = "Error loading notes. Please refresh.";
+            statusMessage.style.color = "red";
         });
-
-
-
-        // --- Initial Data Load ---
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            fetchAndRenderNotes();
-
-        });
-
     </script>
 
 </body>
-
 </html>
-
-
-

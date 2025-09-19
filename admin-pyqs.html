@@ -1,743 +1,260 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Manage PYQs - IITM BS HUB</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    
-
+    <title>Admin - Assignments & PYQs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-
-        .admin-card { background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
-
-        .sidebar { background: linear-gradient(135deg, #003B5C 0%, #005a8b 100%); color: white; width: 280px; }
-
-        .admin-menu-item { transition: all 0.3s ease; border-left: 4px solid transparent; }
-
-        .admin-menu-item:hover, .admin-menu-item.active { background-color: rgba(255, 255, 255, 0.1); border-left-color: #f17922; }
-
-        .btn-primary { background-color: #003B5C; color: white; }
-
-        .btn-primary:hover { background-color: #002943; }
-
-        .btn-secondary { background-color: #f17922; color: white; }
-
-        .btn-secondary:hover { background-color: #d96817; }
-
-        .btn-danger { background-color: #e53e3e; color: white; }
-
-        .btn-danger:hover { background-color: #c53030; }
-
+        :root {
+            --primary-color: #800000;
+            --background-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --danger-color: #d9534f;
+            --success-color: #28a745;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            padding: 2.5rem;
+        }
+        h1 { text-align: center; color: var(--primary-color); font-size: 2.5rem; margin-top: 0; }
+        .section { margin-bottom: 3rem; }
+        .section h2 {
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(128,0,0,0.1);
+        }
+        .submit-btn {
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover { background-color: #600000; }
+        .form-status { text-align: center; font-weight: 500; height: 1.5rem; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        @media (max-width: 768px) {
+            .admin-form { grid-template-columns: 1fr; }
+        }
     </style>
-
 </head>
+<body>
 
-<body class="text-gray-800 flex h-screen">
+    <div class="container">
+        <h1>Admin Panel</h1>
 
-    <!-- Sidebar Navigation -->
-
-    <nav class="sidebar flex flex-col flex-shrink-0">
-
-        <div class="p-6 border-b border-white/10">
-
-            <h1 class="text-xl font-bold flex items-center">
-
-                <i class="fas fa-cogs mr-3"></i>Admin Panel
-
-            </h1>
-
-            <p class="text-sm text-white/80 mt-1">IITM BS HUB Management</p>
-
+        <div class="section">
+            <h2><i class="fas fa-check-double"></i>Manage Graded Assignment Solutions</h2>
+            <form id="solution-form" class="admin-form">
+                <div class="form-group">
+                    <label for="solution-subject">Subject</label>
+                    <input type="text" id="solution-subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="solution-week">Week</label>
+                    <input type="number" id="solution-week" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="solution-link">Solution Link</label>
+                    <input type="url" id="solution-link" required>
+                </div>
+                <button type="submit" class="submit-btn full-width">Add Solution</button>
+            </form>
+            <div id="solution-status" class="form-status"></div>
+            <table class="admin-table">
+                <thead><tr><th>Subject</th><th>Week</th><th>Action</th></tr></thead>
+                <tbody id="solutions-table-body"></tbody>
+            </table>
         </div>
 
-        
-
-        <div class="flex-1 overflow-y-auto py-4">
-
-            <div class="px-4 space-y-2">
-
-                <a href="admin-dashboard.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-tachometer-alt w-5 mr-3"></i>Dashboard
-
-                </a>
-
-                <a href="admin-notes.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-book-open w-5 mr-3"></i>Notes
-
-                </a>
-
-                <a href="admin-pyqs.html" class="admin-menu-item active flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-file-alt w-5 mr-3"></i>PYQs
-
-                </a>
-
-                <a href="admin-notices.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-bullhorn w-5 mr-3"></i>Notices
-
-                </a>
-
-                <a href="admin-schedule.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-calendar-alt w-5 mr-3"></i>Schedule
-
-                </a>
-
-                <a href="admin-settings.html" class="admin-menu-item flex items-center px-4 py-3 rounded-lg">
-
-                    <i class="fas fa-cog w-5 mr-3"></i>Settings
-
-                </a>
-
-            </div>
-
+        <div class="section">
+            <h2><i class="fas fa-file-alt"></i>Manage Previous Year Questions</h2>
+            <form id="pyq-form" class="admin-form">
+                <div class="form-group">
+                    <label for="pyq-year">Year</label>
+                    <input type="number" id="pyq-year" placeholder="e.g., 2024" required>
+                </div>
+                <div class="form-group">
+                    <label for="pyq-date">Exam Date</label>
+                    <input type="text" id="pyq-date" placeholder="e.g., May 2024" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="pyq-link">Download Link</label>
+                    <input type="url" id="pyq-link" required>
+                </div>
+                <button type="submit" class="submit-btn full-width">Add PYQ</button>
+            </form>
+            <div id="pyq-status" class="form-status"></div>
+            <table class="admin-table">
+                <thead><tr><th>Year</th><th>Exam Date</th><th>Action</th></tr></thead>
+                <tbody id="pyq-table-body"></tbody>
+            </table>
         </div>
-
-        
-
-        <div class="p-4 border-t border-white/10">
-
-            <a href="index.html" class="flex items-center px-4 py-3 rounded-lg text-white/80 hover:text-white">
-
-                <i class="fas fa-arrow-left w-5 mr-3"></i>Back to Main Site
-
-            </a>
-
-        </div>
-
-    </nav>
-
-
-
-    <!-- Main Content Area -->
-
-    <div class="flex-1 flex flex-col overflow-hidden">
-
-        <!-- Header -->
-
-        <header class="bg-white border-b border-gray-200">
-
-            <div class="flex justify-between items-center px-6 py-4">
-
-                <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">Manage PYQs</h2>
-
-                    <p class="text-sm text-gray-600">Add and organize previous year questions</p>
-
-                </div>
-
-                
-
-                <div class="flex items-center space-x-4">
-
-                    <div class="text-right">
-
-                        <p class="font-medium" id="admin-user-name">Admin User</p>
-
-                        <p class="text-sm text-gray-500" id="admin-user-role">Administrator</p>
-
-                    </div>
-
-                    <div class="relative" x-data="{ isProfileOpen: false }">
-
-                        <button @click="isProfileOpen = !isProfileOpen" class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f17922]">
-
-                            <img src="https://placehold.co/100x100/003B5C/FFFFFF?text=A" alt="Admin Avatar" id="admin-avatar">
-
-                        </button>
-
-                        <div x-show="isProfileOpen" @click.away="isProfileOpen = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
-
-                            <a href="#" id="admin-logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sign out</a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-
-
-        <!-- PYQs Content -->
-
-        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                <!-- Add/Edit PYQs Form -->
-
-                <div class="lg:col-span-1">
-
-                    <div class="admin-card p-6">
-
-                        <h3 class="text-lg font-bold text-gray-800 mb-4" id="form-title">Add New PYQ</h3>
-
-                        
-
-                        <form id="pyq-form">
-
-                            <input type="hidden" id="pyq-id">
-
-                            
-
-                            <div class="mb-4">
-
-                                <label for="pyq-term" class="block text-gray-700 text-sm font-medium mb-2">Term/Semester</label>
-
-                                <input type="text" id="pyq-term" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent outline-none transition" placeholder="e.g., Term 1, Semester 2">
-
-                            </div>
-
-                            
-
-                            <div class="mb-4">
-
-                                <label for="pyq-subject" class="block text-gray-700 text-sm font-medium mb-2">Subject</label>
-
-                                <input type="text" id="pyq-subject" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent outline-none transition" placeholder="e.g., Mathematics, Programming">
-
-                            </div>
-
-                            
-
-                            <div class="mb-4">
-
-                                <label for="pyq-exam-type" class="block text-gray-700 text-sm font-medium mb-2">Exam Type</label>
-
-                                <select id="pyq-exam-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent outline-none transition">
-
-                                    <option value="Quiz">Quiz</option>
-
-                                    <option value="Midterm">Midterm</option>
-
-                                    <option value="Endterm">Endterm</option>
-
-                                    <option value="Assignment">Assignment</option>
-
-                                </select>
-
-                            </div>
-
-                            
-
-                            <div class="mb-4">
-
-                                <label for="pyq-test-date" class="block text-gray-700 text-sm font-medium mb-2">Test Date</label>
-
-                                <input type="date" id="pyq-test-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent outline-none transition">
-
-                            </div>
-
-                            
-
-                            <div class="mb-4">
-
-                                <label for="pyq-link" class="block text-gray-700 text-sm font-medium mb-2">File Link</label>
-
-                                <input type="url" id="pyq-link" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent outline-none transition" placeholder="https://drive.google.com/...">
-
-                            </div>
-
-                            
-
-                            <div class="flex space-x-2">
-
-                                <button type="submit" class="flex-1 btn-primary py-2 rounded-lg font-semibold transition">
-
-                                    Save PYQ
-
-                                </button>
-
-                                <button type="button" id="cancel-edit" class="hidden btn-danger py-2 px-4 rounded-lg font-semibold transition">
-
-                                    Cancel
-
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
-                
-
-                <!-- PYQs List -->
-
-                <div class="lg:col-span-2">
-
-                    <div class="admin-card p-6">
-
-                        <div class="flex justify-between items-center mb-4">
-
-                            <h3 class="text-lg font-bold text-gray-800">All PYQs</h3>
-
-                            <div class="text-sm text-gray-500" id="pyqs-count">0 PYQs</div>
-
-                        </div>
-
-                        
-
-                        <div class="overflow-x-auto">
-
-                            <table class="w-full text-sm text-left">
-
-                                <thead class="bg-gray-50 text-xs text-gray-700 uppercase tracking-wider">
-
-                                    <tr>
-
-                                        <th scope="col" class="px-4 py-3">Term</th>
-
-                                        <th scope="col" class="px-4 py-3">Subject</th>
-
-                                        <th scope="col" class="px-4 py-3">Exam Type</th>
-
-                                        <th scope="col" class="px-4 py-3">Test Date</th>
-
-                                        <th scope="col" class="px-4 py-3 text-right">Actions</th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody id="pyqs-list">
-
-                                    <tr>
-
-                                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-
-                                            Loading PYQs...
-
-                                        </td>
-
-                                    </tr>
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </main>
 
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-
-    <!-- Firebase SDK -->
-
-    <script type="module">
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-
-
-        const firebaseConfig = { 
-
-            apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", 
-
-            authDomain: "iitm-74779.firebaseapp.com", 
-
-            projectId: "iitm-74779", 
-
-            storageBucket: "iitm-74779.appspot.com", 
-
-            messagingSenderId: "49030766593", 
-
-            appId: "1:49030766593:web:99b7eae829f4af82556000" 
-
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY",
+            authDomain: "iitm-74779.firebaseapp.com",
+            projectId: "iitm-74779",
+            storageBucket: "iitm-74779.firebasestorage.app",
+            messagingSenderId: "49030766593",
+            appId: "1:49030766593:web:99b7eae829f4af82556000"
         };
-
-
-
-        const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
-        const db = getFirestore(app);
-
-
-
-        // Check if user is authenticated
-
-        onAuthStateChanged(auth, async (user) => {
-
-            if (!user) {
-
-                window.location.href = 'admin-login.html';
-
-                return;
-
-            }
-
-            
-
-            document.getElementById('admin-user-name').textContent = user.email;
-
-            document.getElementById('admin-avatar').src = `https://placehold.co/100x100/003B5C/FFFFFF?text=${user.email.charAt(0).toUpperCase()}`;
-
-            
-
-            // Load PYQs
-
-            loadPYQs();
-
-            
-
-            // Check if we're editing a PYQ
-
-            const urlParams = new URLSearchParams(window.location.search);
-
-            const editId = urlParams.get('edit');
-
-            if (editId) {
-
-                loadPYQForEditing(editId);
-
-            }
-
-        });
-
-
-
-        // Logout functionality
-
-        document.getElementById('admin-logout').addEventListener('click', (e) => {
-
-            e.preventDefault();
-
-            signOut(auth).then(() => {
-
-                window.location.href = 'admin-login.html';
-
-            }).catch(console.error);
-
-        });
-
-
-
-        // Load PYQs from Firestore
-
-        function loadPYQs() {
-
-            const pyqsList = document.getElementById('pyqs-list');
-
-            const q = collection(db, "pyq_topics");
-
-            
-
-            onSnapshot(q, (snapshot) => {
-
-                if (snapshot.empty) {
-
-                    pyqsList.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No PYQs found</td></tr>';
-
-                    document.getElementById('pyqs-count').textContent = '0 PYQs';
-
-                    return;
-
-                }
-
-                
-
-                let html = '';
-
-                snapshot.forEach(doc => {
-
-                    const pyq = doc.data();
-
-                    html += `
-
-                        <tr class="bg-white border-b hover:bg-gray-50">
-
-                            <td class="px-4 py-3 font-medium text-gray-900">${pyq.term || 'N/A'}</td>
-
-                            <td class="px-4 py-3">${pyq.subject || 'N/A'}</td>
-
-                            <td class="px-4 py-3">${pyq.examType || 'N/A'}</td>
-
-                            <td class="px-4 py-3">${pyq.testDate || 'N/A'}</td>
-
-                            <td class="px-4 py-3 text-right">
-
-                                <button class="text-blue-600 hover:text-blue-800 mr-2 edit-pyq" data-id="${doc.id}">Edit</button>
-
-                                <button class="text-red-600 hover:text-red-800 delete-pyq" data-id="${doc.id}">Delete</button>
-
-                            </td>
-
-                        </tr>
-
-                    `;
-
-                });
-
-                
-
-                pyqsList.innerHTML = html;
-
-                document.getElementById('pyqs-count').textContent = `${snapshot.size} PYQs`;
-
-                
-
-                // Add event listeners to edit and delete buttons
-
-                document.querySelectorAll('.edit-pyq').forEach(button => {
-
-                    button.addEventListener('click', () => {
-
-                        loadPYQForEditing(button.getAttribute('data-id'));
-
-                    });
-
-                });
-
-                
-
-                document.querySelectorAll('.delete-pyq').forEach(button => {
-
-                    button.addEventListener('click', () => {
-
-                        deletePYQ(button.getAttribute('data-id'));
-
-                    });
-
-                });
-
-            });
-
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- Generic Functions ---
+        function setStatus(element, message, isError = false) {
+            element.textContent = message;
+            element.style.color = isError ? 'var(--danger-color)' : 'var(--success-color)';
+            setTimeout(() => element.textContent = '', 3000);
         }
 
-
-
-        // Load a specific PYQ for editing
-
-        async function loadPYQForEditing(id) {
-
-            const docRef = doc(db, "pyq_topics", id);
-
-            const docSnap = await getDoc(docRef);
-
-            
-
-            if (docSnap.exists()) {
-
-                const pyq = docSnap.data();
-
-                document.getElementById('pyq-id').value = id;
-
-                document.getElementById('pyq-term').value = pyq.term || '';
-
-                document.getElementById('pyq-subject').value = pyq.subject || '';
-
-                document.getElementById('pyq-exam-type').value = pyq.examType || '';
-
-                document.getElementById('pyq-test-date').value = pyq.testDate || '';
-
-                document.getElementById('pyq-link').value = pyq.link || '';
-
-                
-
-                document.getElementById('form-title').textContent = 'Edit PYQ';
-
-                document.getElementById('cancel-edit').classList.remove('hidden');
-
-                
-
-                // Scroll to form
-
-                document.getElementById('pyq-form').scrollIntoView({ behavior: 'smooth' });
-
-            }
-
-        }
-
-
-
-        // Delete a PYQ
-
-        async function deletePYQ(id) {
-
-            if (confirm('Are you sure you want to delete this PYQ?')) {
-
+        async function deleteDocument(collectionName, docId) {
+            if (confirm(`Are you sure you want to delete this item from ${collectionName}?`)) {
                 try {
-
-                    await deleteDoc(doc(db, "pyq_topics", id));
-
-                    alert('PYQ deleted successfully');
-
+                    await db.collection(collectionName).doc(docId).delete();
                 } catch (error) {
-
-                    console.error('Error deleting PYQ: ', error);
-
-                    alert('Error deleting PYQ: ' + error.message);
-
+                    console.error("Error deleting document: ", error);
+                    alert("Failed to delete item.");
                 }
-
             }
-
         }
 
-
-
-        // Handle form submission
-
-        document.getElementById('pyq-form').addEventListener('submit', async (e) => {
-
+        // --- Graded Solutions Logic ---
+        const solutionForm = document.getElementById('solution-form');
+        const solutionStatus = document.getElementById('solution-status');
+        const solutionsTable = document.getElementById('solutions-table-body');
+        
+        solutionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            
-
-            const id = document.getElementById('pyq-id').value;
-
-            const term = document.getElementById('pyq-term').value;
-
-            const subject = document.getElementById('pyq-subject').value;
-
-            const examType = document.getElementById('pyq-exam-type').value;
-
-            const testDate = document.getElementById('pyq-test-date').value;
-
-            const link = document.getElementById('pyq-link').value;
-
-            
-
+            const data = {
+                subject: document.getElementById('solution-subject').value,
+                week: parseInt(document.getElementById('solution-week').value),
+                solutionLink: document.getElementById('solution-link').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
             try {
-
-                if (id) {
-
-                    // Update existing PYQ
-
-                    const pyqRef = doc(db, "pyq_topics", id);
-
-                    await updateDoc(pyqRef, {
-
-                        term: term,
-
-                        subject: subject,
-
-                        examType: examType,
-
-                        testDate: testDate,
-
-                        link: link
-
-                    });
-
-                    alert('PYQ updated successfully');
-
-                } else {
-
-                    // Add new PYQ
-
-                    await addDoc(collection(db, "pyq_topics"), {
-
-                        term: term,
-
-                        subject: subject,
-
-                        examType: examType,
-
-                        testDate: testDate,
-
-                        link: link,
-
-                        createdAt: new Date()
-
-                    });
-
-                    alert('PYQ added successfully');
-
-                }
-
-                
-
-                // Reset form
-
-                document.getElementById('pyq-form').reset();
-
-                document.getElementById('pyq-id').value = '';
-
-                document.getElementById('form-title').textContent = 'Add New PYQ';
-
-                document.getElementById('cancel-edit').classList.add('hidden');
-
-                
-
+                await db.collection('graded_solutions').add(data);
+                setStatus(solutionStatus, 'Solution added successfully!');
+                solutionForm.reset();
             } catch (error) {
-
-                console.error('Error saving PYQ: ', error);
-
-                alert('Error saving PYQ: ' + error.message);
-
+                setStatus(solutionStatus, 'Error adding solution.', true);
             }
-
+        });
+        
+        db.collection('graded_solutions').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            solutionsTable.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                solutionsTable.innerHTML += `<tr>
+                    <td>${data.subject}</td>
+                    <td>${data.week}</td>
+                    <td><button class="delete-btn" onclick="deleteDocument('graded_solutions', '${doc.id}')"><i class="fas fa-trash-alt"></i></button></td>
+                </tr>`;
+            });
         });
 
+        // --- PYQ Logic ---
+        const pyqForm = document.getElementById('pyq-form');
+        const pyqStatus = document.getElementById('pyq-status');
+        const pyqTable = document.getElementById('pyq-table-body');
 
-
-        // Cancel edit
-
-        document.getElementById('cancel-edit').addEventListener('click', () => {
-
-            document.getElementById('pyq-form').reset();
-
-            document.getElementById('pyq-id').value = '';
-
-            document.getElementById('form-title').textContent = 'Add New PYQ';
-
-            document.getElementById('cancel-edit').classList.add('hidden');
-
-            
-
-            // Remove edit parameter from URL
-
-            const url = new URL(window.location);
-
-            url.searchParams.delete('edit');
-
-            window.history.replaceState({}, '', url);
-
+        pyqForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                year: parseInt(document.getElementById('pyq-year').value),
+                examDate: document.getElementById('pyq-date').value,
+                downloadLink: document.getElementById('pyq-link').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            try {
+                await db.collection('pyqs').add(data);
+                setStatus(pyqStatus, 'PYQ added successfully!');
+                pyqForm.reset();
+            } catch (error) {
+                setStatus(pyqStatus, 'Error adding PYQ.', true);
+            }
         });
-
+        
+        db.collection('pyqs').orderBy('year', 'desc').onSnapshot(snapshot => {
+            pyqTable.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                pyqTable.innerHTML += `<tr>
+                    <td>${data.year}</td>
+                    <td>${data.examDate}</td>
+                    <td><button class="delete-btn" onclick="deleteDocument('pyqs', '${doc.id}')"><i class="fas fa-trash-alt"></i></button></td>
+                </tr>`;
+            });
+        });
     </script>
-
 </body>
-
 </html>

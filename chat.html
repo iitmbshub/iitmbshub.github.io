@@ -42,6 +42,7 @@
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
             flex: 1;
             overflow-y: auto;
+            padding-bottom: 20px;
         }
         
         .chat-bubble { 
@@ -159,6 +160,47 @@
             flex-shrink: 0;
             background: #f3f4f6;
             border-top: 1px solid #e5e7eb;
+            position: sticky;
+            bottom: 0;
+            z-index: 30;
+        }
+
+        /* Ensure input form is always visible */
+        .chat-input-container {
+            background: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+            padding: 12px 16px;
+            display: flex !important;
+            align-items: center;
+            gap: 12px;
+            min-height: 60px;
+        }
+
+        /* Fix for mobile browsers */
+        .chat-input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 25px;
+            background: white;
+            outline: none;
+            font-size: 16px; /* Prevent zoom on iOS */
+        }
+
+        .chat-input-container input:focus {
+            border-color: #f17922;
+            box-shadow: 0 0 0 2px rgba(241, 121, 34, 0.2);
+        }
+
+        /* Ensure chat window doesn't overlap input */
+        #chat-window {
+            padding-bottom: 80px;
+        }
+
+        /* Show input area even when not logged in */
+        .input-disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -166,7 +208,8 @@
 
 <div x-data="{ 
     userProfileModal: false, 
-    selectedUser: {}
+    selectedUser: {},
+    isLoggedIn: false
 }" 
 @keydown.escape.window="userProfileModal = false" 
 class="chat-container">
@@ -182,33 +225,83 @@ class="chat-container">
     </header>
 
     <!-- Chat Window -->
-    <main id="chat-window" class="p-2 sm:p-4">
-        <!-- Messages will be loaded here -->
+    <main id="chat-window" class="flex-1 p-2 sm:p-4">
+        <!-- Sample messages for demonstration -->
+        <div class="flex items-start gap-2 my-2 justify-start">
+            <img src="https://i.ibb.co/pBHKw6nn/Picsart-25-04-17-15-09-20-787-1.jpg" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+            <div class="flex flex-col items-start">
+                <div class="other-bubble chat-bubble">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <p class="text-xs font-bold text-blue-600">Admin</p>
+                        <i class="fas fa-check-circle admin-tick text-xs" title="Admin"></i>
+                    </div>
+                    <p class="break-words text-sm sm:text-base">📚 Week 01 GRADED ASSIGNMENT SOLUTION Out Now!</p>
+                </div>
+                <p class="text-xs text-gray-500 px-2 mt-1">10:00</p>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-2 my-2 justify-start">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xs">
+                2
+            </div>
+            <div class="flex flex-col items-start">
+                <div class="other-bubble chat-bubble">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <p class="text-xs font-bold text-purple-600">25f30016</p>
+                    </div>
+                    <p class="break-words text-sm sm:text-base">Hi sir</p>
+                </div>
+                <p class="text-xs text-gray-500 px-2 mt-1">18:24</p>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-2 my-2 justify-start">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xs">
+                2
+            </div>
+            <div class="flex flex-col items-start">
+                <div class="other-bubble chat-bubble">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <p class="text-xs font-bold text-purple-600">25f3001691</p>
+                    </div>
+                    <p class="break-words text-sm sm:text-base">When I will get chances for on camus, now i recently enrolled for foundational level</p>
+                </div>
+                <p class="text-xs text-gray-500 px-2 mt-1">18:25</p>
+            </div>
+        </div>
     </main>
     
-    <!-- Message Input Form -->
-    <footer class="chat-footer p-2 sm:p-3">
-        <form id="chat-form" class="flex items-center space-x-2 sm:space-x-3">
-            <button type="button" id="file-upload-btn" class="text-gray-500 hover:text-[#005a8b] w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-paperclip text-lg sm:text-xl"></i>
-            </button>
-            <input type="file" id="file-input" class="hidden" accept="image/*,application/pdf">
-            <input type="text" id="message-input" placeholder="Type a message..." 
-                   class="flex-1 p-2 sm:p-3 border bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#f17922] text-sm sm:text-base" 
-                   autocomplete="off">
-            <button type="submit" id="send-btn" class="bg-[#005a8b] text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center hover:bg-[#003B5C] transition-colors flex-shrink-0">
-                <i id="send-icon" class="fas fa-paper-plane text-sm sm:text-xl"></i>
-                <div id="send-spinner" class="hidden w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            </button>
-        </form>
-    </footer>
+    <!-- Message Input Form - Always visible -->
+    <div class="chat-input-container" :class="!isLoggedIn ? 'input-disabled' : ''">
+        <button type="button" id="file-upload-btn" class="text-gray-500 hover:text-[#005a8b] p-2 flex-shrink-0">
+            <i class="fas fa-paperclip text-lg"></i>
+        </button>
+        <input type="file" id="file-input" class="hidden" accept="image/*,application/pdf">
+        <input type="text" 
+               id="message-input" 
+               :placeholder="isLoggedIn ? 'Type a message...' : 'Login to send messages...'" 
+               class="flex-1"
+               autocomplete="off"
+               :disabled="!isLoggedIn">
+        <button type="submit" 
+                id="send-btn" 
+                class="bg-[#005a8b] text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-[#003B5C] transition-colors flex-shrink-0"
+                :disabled="!isLoggedIn">
+            <i id="send-icon" class="fas fa-paper-plane"></i>
+            <div id="send-spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        </button>
+    </div>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div id="login-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-white p-6 sm:p-8 rounded-lg text-center shadow-xl">
             <h2 class="text-xl sm:text-2xl font-bold mb-4">Login Required</h2>
             <p class="mb-6 text-sm sm:text-base">You need to be logged in to join the chat.</p>
-            <a href="login.html" class="bg-blue-600 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base">Go to Login</a>
+            <div class="space-y-3">
+                <a href="login.html" class="block w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Go to Login</a>
+                <button id="demo-login" class="block w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">Demo Login (Test)</button>
+            </div>
         </div>
     </div>
 
@@ -231,22 +324,33 @@ class="chat-container">
     </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase SDK and Scripts -->
 <script type="module">
+    // Firebase configuration (same as original)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
     import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", authDomain: "iitm-74779.firebaseapp.com", projectId: "iitm-74779", storageBucket: "iitm-74779.appspot.com", messagingSenderId: "49030766593", appId: "1:49030766593:web:99b7eae829f4af82556000" };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyAC47u3mXuciaavoov2Td2AaI8TiOwV7eY", 
+        authDomain: "iitm-74779.firebaseapp.com", 
+        projectId: "iitm-74779", 
+        storageBucket: "iitm-74779.appspot.com", 
+        messagingSenderId: "49030766593", 
+        appId: "1:49030766593:web:99b7eae829f4af82556000" 
+    };
+    
     const IMGBB_API_KEY = "f31247f51f07c7e6fdf325abaed8e58c";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Get Alpine.js data
+    const alpineData = document.querySelector('[x-data]').__x;
+
     const loginModal = document.getElementById('login-modal');
     const chatWindow = document.getElementById('chat-window');
-    const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('message-input');
     const adminControls = document.getElementById('admin-controls');
     const fileUploadBtn = document.getElementById('file-upload-btn');
@@ -254,12 +358,23 @@ class="chat-container">
     const sendBtn = document.getElementById('send-btn');
     const sendIcon = document.getElementById('send-icon');
     const sendSpinner = document.getElementById('send-spinner');
+    const demoLoginBtn = document.getElementById('demo-login');
 
     let currentUser = null;
 
+    // Demo login functionality
+    demoLoginBtn.addEventListener('click', async () => {
+        try {
+            await signInAnonymously(auth);
+        } catch (error) {
+            console.error('Demo login error:', error);
+        }
+    });
+
+    // Message rendering function (same as original)
     function renderMessage(doc) {
         const data = doc.data();
-        const isCurrentUser = data.uid === currentUser.uid;
+        const isCurrentUser = data.uid === currentUser?.uid;
         const isAdmin = data.email === "raojatin@gmail.com";
         const avatar = isAdmin ? 'https://i.ibb.co/pBHKw6nn/Picsart-25-04-17-15-09-20-787-1.jpg' : data.userAvatar;
 
@@ -314,27 +429,33 @@ class="chat-container">
         chatWindow.appendChild(messageDiv);
     }
 
+    // Auth state change handler
     onAuthStateChanged(auth, user => {
         if (user) {
-            loginModal.classList.add('hidden');
+            loginModal.style.display = 'none';
+            alpineData.isLoggedIn = true;
+            
             const isAdmin = user.email === "raojatin@gmail.com";
-            const name = user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1);
+            const name = user.email ? user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1) : 'Anonymous';
             const initial = name.charAt(0).toUpperCase();
             
             currentUser = { 
                 uid: user.uid, 
-                email: user.email, 
+                email: user.email || 'anonymous@demo.com', 
                 name: name, 
                 avatar: isAdmin ? 'https://i.ibb.co/pBHKw6nn/Picsart-25-04-17-15-09-20-787-1.jpg' : `https://placehold.co/100x100/f17922/FFFFFF?text=${initial}`, 
                 isAdmin: isAdmin 
             };
 
-            onSnapshot(query(collection(db, "group_chat"), orderBy("timestamp")), (snapshot) => {
+            // Listen for messages
+            const messagesQuery = query(collection(db, "group_chat"), orderBy("timestamp"));
+            onSnapshot(messagesQuery, (snapshot) => {
                 const scrollTop = chatWindow.scrollTop;
                 const scrollHeight = chatWindow.scrollHeight;
                 const clientHeight = chatWindow.clientHeight;
                 const isScrolledToBottom = scrollHeight - scrollTop <= clientHeight + 50;
 
+                // Clear and re-render messages
                 chatWindow.innerHTML = '';
                 snapshot.forEach(renderMessage);
 
@@ -343,18 +464,22 @@ class="chat-container">
                         chatWindow.scrollTop = chatWindow.scrollHeight;
                     }, 100);
                 }
+            }, (error) => {
+                console.error("Error loading messages:", error);
             });
         } else { 
-            loginModal.classList.remove('hidden'); 
+            loginModal.style.display = 'flex';
+            alpineData.isLoggedIn = false;
         }
     });
 
-    chatForm.addEventListener('submit', async e => {
+    // Send message functionality
+    function sendMessage(e) {
         e.preventDefault();
         const text = messageInput.value.trim();
         if (text && currentUser) {
             messageInput.value = '';
-            await addDoc(collection(db, "group_chat"), { 
+            addDoc(collection(db, "group_chat"), { 
                 text: text, 
                 type: 'text', 
                 uid: currentUser.uid, 
@@ -362,25 +487,42 @@ class="chat-container">
                 userName: currentUser.name, 
                 userAvatar: currentUser.avatar, 
                 timestamp: serverTimestamp()
+            }).then(() => {
+                setTimeout(() => {
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }, 100);
+            }).catch(error => {
+                console.error("Error sending message:", error);
+                alert("Failed to send message. Please try again.");
             });
-            
-           // Auto scroll to bottom after sending message
-            setTimeout(() => {
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }, 100);
+        }
+    }
+
+    // Event listeners
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage(e);
         }
     });
     
     fileUploadBtn.addEventListener('click', () => fileInput.click());
+    
     fileInput.addEventListener('change', async e => {
         const file = e.target.files[0]; 
-        if (!file) return;
+        if (!file || !currentUser) return;
+        
         toggleLoading(true);
         const formData = new FormData(); 
         formData.append('image', file);
+        
         try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+                method: 'POST', 
+                body: formData 
+            });
             const result = await res.json();
+            
             if (result.success) {
                 const fileType = file.type.startsWith('image/') ? 'image' : 'pdf';
                 await addDoc(collection(db, "group_chat"), { 
@@ -394,13 +536,12 @@ class="chat-container">
                     timestamp: serverTimestamp()
                 });
             } else { 
-                alert('File upload failed: ' + result.error.message); 
+                alert('File upload failed: ' + result.error?.message); 
             }
         } catch (error) { 
             console.error('Upload Error:', error); 
             alert('An error occurred during upload.'); 
-        }
-        finally { 
+        } finally { 
             toggleLoading(false); 
             fileInput.value = ''; 
         }
@@ -413,6 +554,7 @@ class="chat-container">
         fileUploadBtn.disabled = isLoading;
     }
     
+    // Message actions
     chatWindow.addEventListener('click', async (e) => {
         const target = e.target.closest('button[data-action]');
         if (!target) return;
@@ -420,35 +562,35 @@ class="chat-container">
         const action = target.dataset.action;
         const messageId = target.dataset.id;
 
-        if (action === 'delete') {
+        if (action === 'delete' && currentUser) {
             const messageRef = doc(db, 'group_chat', messageId);
-            const messageSnap = await getDoc(messageRef);
-            if(messageSnap.exists() && messageSnap.data().uid === currentUser.uid) {
-                if (confirm('Are you sure you want to unsend this message?')) {
-                    try {
+            try {
+                const messageSnap = await getDoc(messageRef);
+                if(messageSnap.exists() && messageSnap.data().uid === currentUser.uid) {
+                    if (confirm('Are you sure you want to unsend this message?')) {
                         await deleteDoc(messageRef);
-                    } catch (error) {
-                        console.error("Error deleting message:", error);
-                        alert("Could not delete message.");
                     }
                 }
+            } catch (error) {
+                console.error("Error deleting message:", error);
+                alert("Could not delete message.");
             }
         }
     });
 
+    // User profile modal
     document.addEventListener('click', e => {
         if(e.target.matches('[data-uid]')) {
             const el = e.target;
-            const alpineComponent = e.target.closest('[x-data]').__x;
-            alpineComponent.selectedUser = { 
+            alpineData.selectedUser = { 
                 uid: el.dataset.uid, 
                 name: el.dataset.name, 
                 email: el.dataset.email, 
                 avatar: el.dataset.avatar, 
                 isAdmin: el.dataset.isAdmin === 'true' 
             };
-            adminControls.style.display = currentUser.isAdmin ? 'block' : 'none';
-            alpineComponent.userProfileModal = true;
+            adminControls.style.display = currentUser?.isAdmin ? 'block' : 'none';
+            alpineData.userProfileModal = true;
         }
     });
 </script>

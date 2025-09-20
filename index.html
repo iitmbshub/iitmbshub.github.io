@@ -61,7 +61,7 @@
             <div @click="open = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <img id="modal-image" src="https://placehold.co/600x600/003b5c/ffffff?text=IITM+BS+HUB" alt="Welcome Image" class="w-full h-64 object-cover">
+                <img id="modal-image" src="https://placehold.co/600x400/003b5c/ffffff?text=Loading..." alt="Welcome Image" class="w-full h-64 object-cover">
                 <div class="px-6 py-5">
                     <h3 class="text-2xl leading-6 font-bold text-[#003B5C]" id="modal-title">Welcome to the Hub!</h3>
                     <div class="mt-3"><p class="text-sm text-gray-600" id="modal-about">Your one-stop destination for the IITM BS program.</p></div>
@@ -148,6 +148,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Global variable to store modal controller
+        let modalController = null;
+
         // --- 1. Authentication ---
         function handleAuthState(user) {
             const loginButton = document.getElementById('login-button');
@@ -229,39 +232,63 @@
             });
         }
         
-        // --- 4. Load Site-Wide Settings ---
-        async function loadSiteSettings() {
+        // --- 4. Load Site-Wide Settings and Prepare Popup ---
+        async function loadSiteSettingsAndPreparePopup() {
             const docRef = doc(db, "settings", "siteConfig");
             try {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const settings = docSnap.data();
+                    
                     document.getElementById('whatsapp-link').href = settings.whatsappLink || "#";
-                    document.getElementById('modal-image').src = settings.popupImageUrl || "https://placehold.co/600x600/003b5c/ffffff?text=IITM+BS+HUB";
-                    document.getElementById('modal-about').textContent = settings.popupAboutText || "Default welcome message.";
-                    document.getElementById('modal-button').textContent = settings.popupCtaButtonText || "Learn More";
-                    document.getElementById('modal-button').href = settings.popupCtaButtonUrl || "#";
+
+                    const popupImageUrl = settings.popupImageUrl;
+                    if (popupImageUrl && popupImageUrl.trim() !== '') {
+                        document.getElementById('modal-image').src = popupImageUrl;
+                        document.getElementById('modal-about').textContent = settings.popupAboutText || "Default welcome message.";
+                        document.getElementById('modal-button').textContent = settings.popupCtaButtonText || "Learn More";
+                        document.getElementById('modal-button').href = settings.popupCtaButtonUrl || "#";
+                        
+                        // Store modal controller and show popup after Alpine.js is ready
+                        setTimeout(() => {
+                            waitForAlpineAndShowModal();
+                        }, 7000);
+                    }
                 }
             } catch(error) {
                 console.error("Error loading site settings:", error);
             }
         }
 
-        // --- 5. Show Welcome Popup ---
-        function showWelcomePopup() {
-            if (!sessionStorage.getItem('hasSeenWelcomePopup')) {
-                document.getElementById('welcome-modal').__x.$data.open = true;
-                sessionStorage.setItem('hasSeenWelcomePopup', 'true');
-            }
+        // --- 5. Wait for Alpine.js and Show Modal ---
+        function waitForAlpineAndShowModal() {
+            const modalElement = document.getElementById('welcome-modal');
+            
+            // Check if Alpine.js is initialized
+            const checkAlpine = () => {
+                if (window.Alpine && modalElement._x_dataStack && modalElement._x_dataStack[0]) {
+                    // Alpine.js is ready, show the modal
+                    modalElement._x_dataStack[0].open = true;
+                } else {
+                    // Wait a bit more and try again
+                    setTimeout(checkAlpine, 100);
+                }
+            };
+            
+            checkAlpine();
         }
 
         // --- Initial Load on Page Ready ---
         document.addEventListener('DOMContentLoaded', () => {
             renderNotices();
             renderSchedule();
-            loadSiteSettings().then(showWelcomePopup);
+            loadSiteSettingsAndPreparePopup();
+        });
+
+        // --- Alpine.js Ready Event ---
+        document.addEventListener('alpine:init', () => {
+            console.log('Alpine.js initialized');
         });
     </script>
 </body>
-
 </html>

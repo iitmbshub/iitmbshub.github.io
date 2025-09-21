@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Calendar - Sep 2025</title>
+    <style>
+        /* --- Google Font --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* --- CSS Variables for Easy Theming --- */
+        :root {
+            --primary-color: #007BFF;
+            --primary-hover: #0056b3;
+            --secondary-color: #f8f9fa;
+            --header-bg: #ffffff;
+            --text-color: #343a40;
+            --heading-color: #212529;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --card-bg: #ffffff;
+        }
+
+        /* --- General & Body Styling --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        /* --- Main Container & Header --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: var(--heading-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 30px var(--shadow-color);
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        /* --- Table Styling (Desktop) --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto; /* Fallback for very wide content */
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        thead th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f7ff;
+        }
+        
+        tbody td:first-child {
+            font-weight: 500;
+            color: var(--heading-color);
+        }
+
+        /* --- Fully Responsive Table (Mobile "Card" View) --- */
+        @media screen and (max-width: 768px) {
+            thead {
+                display: none; /* Hide desktop headers on mobile */
+            }
+
+            tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 4px 10px var(--shadow-color);
+                padding: 15px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                padding: 10px 0;
+                border-bottom: 1px dotted var(--border-color);
+            }
+            
+            td:last-child {
+                border-bottom: none;
+            }
+
+            /* Use data-label for mobile headers */
+            td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-align: left;
+                padding-right: 15px;
+                color: var(--primary-color);
+            }
+        }
+        
+        /* --- Button & CTA Section --- */
+        .cta-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .notify-btn {
+            background: linear-gradient(45deg, var(--primary-color), #0056b3);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .notify-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 123, 255, 0.4);
+        }
+
+        /* --- Modal (Popup) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 35px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal h3 {
+            font-size: 1.5rem;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        #mobileNumber {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        #mobileNumber:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        #confirmBtn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--success-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        #confirmBtn:hover { background-color: #218838; }
+        #confirmBtn:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+
+        /* --- Toast Notification --- */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.3s forwards, slideOut 0.3s forwards 3.5s;
+        }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--error-color); }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+
+        .footer-note { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Academic Calendar</h1>
+            <p>Important Dates for September 2025 Term</p>
+        </header>
+
+        <div class="content-card">
+            <h2>For Qualifier Students</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Event</th><th>Start Date</th><th>End Date</th></tr></thead>
+                    <tbody>
+                        <tr><td data-label="Event">Qualifier Registration Form</td><td data-label="Start Date">Friday, June 6, 2025</td><td data-label="End Date">Thursday, September 4, 2025</td></tr>
+                        <tr><td data-label="Event">Course and Program Orientation</td><td data-label="Start Date">Monday, September 8, 2025</td><td data-label="End Date">Thursday, September 18, 2025</td></tr>
+                        <tr><td data-label="Event">Qualifier Exam</td><td data-label="Start Date">Sunday, October 26, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results for Qualifier exam</td><td data-label="Start Date">Thursday, October 30, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">QF Course Registration and Reattempt Qualifier window</td><td data-label="Start Date">Thursday, October 30, 2025</td><td data-label="End Date">Friday, October 31, 2025</td></tr>
+                        <tr><td data-label="Event">Reattempt Qualifier Exam</td><td data-label="Start Date">Sunday, November 23, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results Qual_Reattempt</td><td data-label="Start Date">Wednesday, December 3, 2025</td><td data-label="End Date"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>For Term Students</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Event</th><th>Start Date</th><th>End Date</th></tr></thead>
+                    <tbody>
+                        <tr><td data-label="Event">Course registration window</td><td data-label="Start Date">Monday, September 8, 2025</td><td data-label="End Date">Tuesday, September 9, 2025</td></tr>
+                        <tr><td data-label="Event">Drop Course form window</td><td data-label="Start Date">Friday, October 10, 2025</td><td data-label="End Date">Sunday, October 12, 2025</td></tr>
+                        <tr><td data-label="Event">Term start</td><td data-label="Start Date">Friday, September 19, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Quiz1</td><td data-label="Start Date">Sunday, September 26, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results for Quiz1</td><td data-label="Start Date">Monday, November 3, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Programming Quiz1 (Day1)</td><td data-label="Start Date">Sunday, November 9, 2025</td><td data-label="End Date">Monday, November 10, 2025</td></tr>
+                        <tr><td data-label="Event">Programming Quiz1 (Day2)</td><td data-label="Start Date">Sunday, November 9, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">OPPE1 Result release</td><td data-label="Start Date">Friday, November 14, 2025</td><td data-label="End Date">Wednesday, November 19, 2025</td></tr>
+                        <tr><td data-label="Event">Quiz2</td><td data-label="Start Date">Sunday, November 23, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results for Quiz2</td><td data-label="Start Date">Monday, December 1, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Programming Quiz2 (Day1)</td><td data-label="Start Date">Sunday, December 7, 2025</td><td data-label="End Date">Monday, December 8, 2025</td></tr>
+                        <tr><td data-label="Event">Programming Quiz2 (Day2)</td><td data-label="Start Date">Sunday, December 14, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">OPPE2 Result release</td><td data-label="Start Date">Thursday, December 11, 2025</td><td data-label="End Date">Tuesday, December 16, 2025</td></tr>
+                        <tr><td data-label="Event">END TERM (DAD_Qualifier)</td><td data-label="Start Date">Sunday, December 21, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results for EndTerm</td><td data-label="Start Date">Monday, December 29, 2025</td><td data-label="End Date">Saturday, January 3, 2026</td></tr>
+                        <tr><td data-label="Event">DWC Meeting</td><td data-label="Start Date">YTD</td><td data-label="End Date">YTD</td></tr>
+                        <tr><td data-label="Event">Class Committee</td><td data-label="Start Date">YTD</td><td data-label="End Date">YTD</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>For DAD Qualifier Students</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Event</th><th>Start Date</th><th>End Date</th></tr></thead>
+                    <tbody>
+                        <tr><td data-label="Event">DAD Qualifier Registration Window</td><td data-label="Start Date">Saturday, September 13, 2025</td><td data-label="End Date">Friday, November 21, 2025</td></tr>
+                        <tr><td data-label="Event">DAD Qualifier Exam</td><td data-label="Start Date">Sunday, December 21, 2025</td><td data-label="End Date"></td></tr>
+                        <tr><td data-label="Event">Publishing results for DAD Qualifier</td><td data-label="Start Date">Monday, December 29, 2025</td><td data-label="End Date">Saturday, January 3, 2026</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <h2>Last Date to Edit Exam City</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Event</th><th>Start Date</th><th>End Date</th></tr></thead>
+                    <tbody>
+                        <tr><td data-label="Event">Quiz1</td><td data-label="Start Date">Friday, September 19, 2025</td><td data-label="End Date">Friday, September 26, 2025</td></tr>
+                        <tr><td data-label="Event">Quiz2</td><td data-label="Start Date">Friday, September 19, 2025</td><td data-label="End Date">Sunday, October 26, 2025</td></tr>
+                        <tr><td data-label="Event">End Term</td><td data-label="Start Date">Friday, September 19, 2025</td><td data-label="End Date">Sunday, December 21, 2025</td></tr>
+                        <tr><td data-label="Event">Paradox</td><td data-label="Start Date">Wednesday, June 4, 2025</td><td data-label="End Date">Sunday, June 8, 2025</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="content-card cta-section">
+            <h2>Stay Updated</h2>
+            <p>Never miss a deadline. Get notifications for important dates.</p>
+            <button id="notificationBtn" class="notify-btn">Notify Me</button>
+        </div>
+
+        <p class="footer-note">The term start and exam dates are final. Any changes will be announced in advance.</p>
+    </div>
+
+    <div id="notifyModal" class="modal">
+        <div class="modal-content">
+            <h3>Get Notified</h3>
+            <p>Enter your mobile number, and we'll send you reminders for key dates.</p>
+            <input type="tel" id="mobileNumber" placeholder="e.g., 9876543210" autocomplete="off">
+            <button id="confirmBtn">Confirm & Subscribe</button>
+        </div>
+    </div>
+    
+    <div id="toast-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById("notifyModal");
+            const openBtn = document.getElementById("notificationBtn");
+            const confirmBtn = document.getElementById('confirmBtn');
+            const mobileNumberInput = document.getElementById('mobileNumber');
+
+            // --- Function to show/hide modal ---
+            const showModal = () => {
+                modal.classList.add('show');
+            };
+            const hideModal = () => {
+                modal.classList.remove('show');
+            };
+
+            // --- Function to create and show a toast notification ---
+            const showToast = (message, type = 'success') => {
+                const toastContainer = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 4000); // Remove toast after 4 seconds
+            };
+            
+            // --- Event Listeners ---
+            openBtn.addEventListener('click', showModal);
+
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) { // Close if clicked on backdrop
+                    hideModal();
+                }
+            });
+
+            // --- Telegram Bot Logic ---
+            confirmBtn.addEventListener('click', function() {
+                const mobileNumber = mobileNumberInput.value.trim();
+
+                // Simple validation
+                if (!/^\d{10,15}$/.test(mobileNumber)) {
+                    showToast("Please enter a valid mobile number.", 'error');
+                    return;
+                }
+
+                // Disable button and show loading state
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Sending...';
+
+                // --- Telegram API Details ---
+                const botToken = "8311976506:AAHCMdrwWzHbKYPVxItoiRXFg0hvppS_26c";
+                const chatId = "5165964724";
+                const message = `New Calendar Notification Request:\nMobile: ${mobileNumber}`;
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+                // Send the message using Fetch API
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            showToast("Success! You are now subscribed for notifications.");
+                            hideModal();
+                            mobileNumberInput.value = "";
+                        } else {
+                            showToast("Failed to subscribe. Please try again.", 'error');
+                            console.error("Telegram API error:", data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        showToast("An error occurred. Please check your connection.", 'error');
+                    })
+                    .finally(() => {
+                          // Re-enable button
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = 'Confirm & Subscribe';
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

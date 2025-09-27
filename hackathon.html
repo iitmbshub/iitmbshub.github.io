@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon Team Join - Registration</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import and fallback for a modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Configure Tailwind to use Inter and the primary color */
+        :root {
+            --color-primary: #0b74ff;
+        }
+
+        /* Applying the Inter font globally */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+
+        /* Custom style for selected chip labels */
+        input[type="checkbox"]:checked + label.chip {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        /* Custom focus color for inputs */
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--color-primary) !important;
+            box-shadow: 0 0 0 2px rgba(11, 116, 255, 0.2) !important;
+        }
+
+        /* Custom style for radio/checkbox groups to hide native input */
+        .hidden-radio, .hidden-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        /* Style for checkbox/radio labels */
+        .skill-label, .role-label {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+            text-align: center;
+        }
+
+        .hidden-checkbox:checked + .skill-label,
+        .hidden-radio:checked + .role-label {
+            background-color: #e0f2ff; /* Light blue background for selected */
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Custom style for the Telegram link icon */
+        .icon-telegram {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="%23FFFFFF" d="M248 8C111.9 8 0 119.9 0 256s111.9 248 248 248 248-111.9 248-248S384.1 8 248 8zm121.8 169.9l-116.4 81.6 4.1 143.2c.7 20.3 27 30.7 41.6 15.6l54.7-53.1 114.7 83.3c35 20.2 81.3-26.6 57.6-62.8zm-15.6 10.1l-105-64.8c-1.4-.8-2.5-2.2-2.9-3.9L242 165.7c-5-10.1-2.9-18.4 6-18.4s12.5 8.1 15 13.1l21.3 42.4c1 2 2.3 3.5 4 4.5l105 64.8c21.8 13.4 33.7-22.1 11.5-35.8z"/></svg>');
+            background-size: 1.25rem 1.25rem;
+            background-repeat: no-repeat;
+            background-position: left 0.75rem center;
+            padding-left: 2.5rem; /* Space for the icon */
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Registration Card Container -->
+    <div class="w-full max-w-xl bg-white p-6 md:p-8 rounded-xl shadow-2xl shadow-gray-300">
+
+        <!-- Header -->
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-2 text-center" style="color: var(--color-primary);">
+            Hackathon Join Registration
+        </h1>
+        <p class="text-gray-500 mb-8 text-center text-sm">
+            Fill out your details to find your perfect hackathon team.
+        </p>
+
+        <!-- Form -->
+        <form id="registrationForm" class="space-y-6">
+
+            <!-- 1. Full Name -->
+            <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" id="fullName" name="fullName" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none text-gray-800">
+            </div>
+
+            <!-- 2. Mobile Number -->
+            <div>
+                <label for="mobileNumber" class="block text-sm font-medium text-gray-700 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+                <input type="text" id="mobileNumber" name="mobileNumber" required maxlength="10" pattern="\d{10}"
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none text-gray-800"
+                       placeholder="">
+            </div>
+
+            <!-- 3. Email Address (Optional) -->
+            <div>
+                <label for="emailAddress" class="block text-sm font-medium text-gray-700 mb-1">Email Address (Optional)</label>
+                <input type="email" id="emailAddress" name="emailAddress"
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none text-gray-800">
+            </div>
+
+            <!-- 4. Select State -->
+            <div>
+                <label for="state" class="block text-sm font-medium text-gray-700 mb-1">Select State <span class="text-red-500">*</span></label>
+                <select id="state" name="state" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none text-gray-800">
+                    <option value="" disabled selected>Choose your state</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- 5. Languages Known (Multi-Select Chips) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Languages Known (Select all that apply) <span class="text-red-500">*</span></label>
+                <div id="languagesContainer" class="flex flex-wrap gap-2">
+                    <input type="checkbox" id="lang_hindi" name="languages" value="Hindi" class="hidden-checkbox">
+                    <label for="lang_hindi" class="chip px-3 py-1 border border-gray-300 rounded-full text-sm text-gray-700 cursor-pointer transition-colors">Hindi</label>
+
+                    <input type="checkbox" id="lang_english" name="languages" value="English" class="hidden-checkbox">
+                    <label for="lang_english" class="chip px-3 py-1 border border-gray-300 rounded-full text-sm text-gray-700 cursor-pointer transition-colors">English</label>
+
+                    <input type="checkbox" id="lang_kannada" name="languages" value="Kannada" class="hidden-checkbox">
+                    <label for="lang_kannada" class="chip px-3 py-1 border border-gray-300 rounded-full text-sm text-gray-700 cursor-pointer transition-colors">Kannada</label>
+
+                    <input type="checkbox" id="lang_telugu" name="languages" value="Telugu" class="hidden-checkbox">
+                    <label for="lang_telugu" class="chip px-3 py-1 border border-gray-300 rounded-full text-sm text-gray-700 cursor-pointer transition-colors">Telugu</label>
+
+                    <input type="checkbox" id="lang_other" name="languages" value="Other" class="hidden-checkbox">
+                    <label for="lang_other" class="chip px-3 py-1 border border-gray-300 rounded-full text-sm text-gray-700 cursor-pointer transition-colors">Other</label>
+                </div>
+                <div id="languageError" class="text-sm text-red-500 mt-1 hidden">Please select at least one language.</div>
+            </div>
+
+            <!-- 6. Skills / Hackathon Roles (Checkbox Group - MUST choose at least one) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Skills / Hackathon Roles (Select at least one) <span class="text-red-500">*</span></label>
+                <div id="skillsContainer" class="grid grid-cols-2 gap-3 md:grid-cols-3">
+                    <!-- Researcher -->
+                    <input type="checkbox" id="skill_researcher" name="skills" value="Researcher" class="hidden-checkbox">
+                    <label for="skill_researcher" class="skill-label">Researcher</label>
+
+                    <!-- PPT Maker -->
+                    <input type="checkbox" id="skill_ppt" name="skills" value="PPT Maker" class="hidden-checkbox">
+                    <label for="skill_ppt" class="skill-label">PPT Maker</label>
+
+                    <!-- Video Editor -->
+                    <input type="checkbox" id="skill_video" name="skills" value="Video Editor" class="hidden-checkbox">
+                    <label for="skill_video" class="skill-label">Video Editor</label>
+
+                    <!-- Presentation / Good Speaker -->
+                    <input type="checkbox" id="skill_speaker" name="skills" value="Presentation / Good Speaker" class="hidden-checkbox">
+                    <label for="skill_speaker" class="skill-label">Presentation / Good Speaker</label>
+                    
+                    <!-- Developer / Coder -->
+                    <input type="checkbox" id="skill_developer" name="skills" value="Developer / Coder" class="hidden-checkbox">
+                    <label for="skill_developer" class="skill-label">Figam expert / Ui & Ux expert</label>
+                </div>
+                <div id="skillError" class="text-sm text-red-500 mt-1 hidden">Please select at least one skill.</div>
+            </div>
+
+            <!-- 7. Primary Role (Radio Button - Choose one only) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Primary Role (Choose one) <span class="text-red-500">*</span></label>
+                <div id="primaryRoleContainer" class="flex flex-wrap gap-2">
+                    <!-- Developer -->
+                    <input type="radio" id="role_dev" name="primaryRole" value="Developer" required class="hidden-radio">
+                    <label for="role_dev" class="role-label px-3 py-1 text-sm">Developer</label>
+                    
+                    <!-- Designer -->
+                    <input type="radio" id="role_designer" name="primaryRole" value="Designer" required class="hidden-radio">
+                    <label for="role_designer" class="role-label px-3 py-1 text-sm">Designer</label>
+                    
+                    <!-- Manager -->
+                    <input type="radio" id="role_manager" name="primaryRole" value="Project Manager" required class="hidden-radio">
+                    <label for="role_manager" class="role-label px-3 py-1 text-sm">Project Manager</label>
+                    
+                    <!-- Strategist -->
+                    <input type="radio" id="role_strategist" name="primaryRole" value="Strategist/Idea Generator" required class="hidden-radio">
+                    <label for="role_strategist" class="role-label px-3 py-1 text-sm">Strategist/Idea Generator</label>
+                </div>
+                <div id="primaryRoleError" class="text-sm text-red-500 mt-1 hidden">Please select a primary role.</div>
+            </div>
+
+
+            <!-- 8. Notes / Additional Information (Optional) -->
+            <div>
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes / Additional Information (Optional)</label>
+                <textarea id="notes" name="notes" rows="3"
+                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none text-gray-800"></textarea>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" id="submitButton"
+                    class="w-full py-3 mt-4 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition duration-200 focus:outline-none focus:ring-4"
+                    style="background-color: var(--color-primary); focus-ring-color: rgba(11, 116, 255, 0.5);">
+                Join the Team
+            </button>
+            <div id="loadingIndicator" class="text-center text-gray-500 mt-2 hidden">Submitting registration...</div>
+
+        </form>
+    </div>
+
+    <!-- Success Modal/Popup -->
+    <div id="successModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-transform duration-300">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800" style="color: var(--color-primary);">Registration Successful!</h2>
+            <p class="text-gray-700 mb-6">
+                You will receive a WhatsApp message for team joining. Please stay ready. Also, download and read the <span class="font-semibold">Hackathon Guide PDF</span>.
+            </p>
+
+            <div class="space-y-3">
+                <!-- WhatsApp Button -->
+                <a id="whatsappLink" href="#" target="_blank"
+                   class="w-full flex justify-center items-center py-3 px-4 text-white font-semibold rounded-lg transition duration-200 shadow-md"
+                   style="background-color: #25D366; hover-bg: #1da84d;">
+                   <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.77.47 3.44 1.35 4.93l-1.4 5.17 5.3-1.38c1.45.85 3.1 1.3 4.65 1.3 5.46 0 9.9-4.44 9.9-9.9s-4.44-9.9-9.9-9.9zm4.6 14.5c-.24.3-.6.37-1.15.14-.55-.23-3.26-1.63-3.76-1.8-1.57-.52-2.3-1.54-2.3-2.58 0-.97.74-1.37 1.25-1.59.5-.22.95-.25 1.2-.25.26 0 .6.04.85.6.25.56.84 2.1 1.05 2.27.2.16.33.2.6.08.3-.13.98-.36 1.87-.92.68-.42 1.13-.56 1.48-.48.37.08.57.48.57.85 0 .22-.05.53-.25.86z"/></svg>
+                   Open WhatsApp to Join
+                </a>
+
+                <!-- PDF Download Button -->
+                <a id="pdfDownloadLink" href="#" download="hackathon_guide.pdf"
+                   class="w-full flex justify-center items-center py-3 px-4 font-semibold rounded-lg transition duration-200 shadow-md text-gray-800 border-2 border-gray-300 hover:bg-gray-100">
+                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V17a2 2 0 01-2 2z"></path></svg>
+                   Download Hackathon Guide PDF
+                </a>
+
+               <!-- Close Button -->
+                <button onclick="closeModal()"
+                        class="w-full py-3 px-4 font-semibold rounded-lg text-white transition duration-200"
+                        style="background-color: #ef4444; hover-bg: #dc2626;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Telegram Bot and Config Setup ---
+        const BOT_TOKEN = '8311976506:AAHCMdrwWzHbKYPVxItoiRXFg0hvppS_26c';
+        const CHAT_ID = '5165964724';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        // --- DOM Elements ---
+        const form = document.getElementById('registrationForm');
+        const modal = document.getElementById('successModal');
+        const submitButton = document.getElementById('submitButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const whatsappLink = document.getElementById('whatsappLink');
+        const pdfDownloadLink = document.getElementById('pdfDownloadLink');
+
+        // Helper function to show the modal
+        function showModal() {
+            modal.classList.remove('hidden');
+            // Add a small delay for the transition effect
+            setTimeout(() => {
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        }
+
+        // Helper function to close the modal
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.querySelector('div').classList.remove('scale-100');
+        }
+
+        // Function to create a simple PDF Blob and generate a URL for download
+        function generateHackathonPDF() {
+            const content = 
+                "Hackathon Guide\n\n" +
+                "--------------------------------------------------\n\n" +
+                "Rules:\n\n" +
+                "1. Teamwork: Collaborate effectively with your assigned team members.\n" +
+                "2. Be on time: Ensure timely submission and attendance for all sessions.\n" +
+                "3. Prepare your PPT/Video: Final submission requires a well-prepared presentation or demo video.\n\n" +
+                "Good luck and happy hacking!";
+
+            // Using a simple text Blob with a PDF MIME type for single-file implementation
+            const blob = new Blob([content], { type: 'application/pdf' });
+            return URL.createObjectURL(blob);
+        }
+
+        /**
+         * Formats the collected user data into a clean, readable string for the Telegram message.
+         * @param {Object} data - The form data object.
+         * @returns {string} The formatted message text.
+         */
+        function formatDataForTelegram(data) {
+            const details = [
+                `*New Hackathon Registration*`,
+                `----------------------------------------`,
+                `*Name:* ${data.fullName}`,
+                `*Mobile:* ${data.mobileNumber}`,
+                `*Email:* ${data.emailAddress || 'N/A'}`,
+                `*State:* ${data.state}`,
+                `*Languages:* ${data.languages.join(', ') || 'N/A'}`,
+                `*Skills:* ${data.skills.join(', ')}`,
+                `*Primary Role:* ${data.primaryRole}`,
+                `*Notes:* ${data.notes || 'None'}`,
+                `----------------------------------------`
+            ];
+            return details.join('\n');
+        }
+
+        /**
+         * Sends the formatted data to the Telegram Bot API.
+         * Implements exponential backoff for retries (max 3 attempts).
+         * @param {string} messageText - The message content.
+         */
+        async function sendToTelegramBot(messageText) {
+            const maxRetries = 3;
+            let delay = 1000;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const payload = {
+                        chat_id: CHAT_ID,
+                        text: messageText,
+                        parse_mode: 'Markdown'
+                    };
+
+                    const response = await fetch(TELEGRAM_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        console.log("Telegram message sent successfully!");
+                        return; // Exit if successful
+                    } else {
+                        const error = await response.json();
+                        console.error(`Attempt ${i + 1}: Telegram API error: ${response.status} -`, error);
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${i + 1}: Network error during Telegram submission:`, error);
+                }
+
+                // Prepare for the next retry with exponential backoff
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            console.error("Failed to send registration details to Telegram after multiple retries.");
+        }
+
+        // --- Validation and Submission Handler ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 1. Collect Data
+            const formData = {
+                fullName: form.fullName.value.trim(),
+                mobileNumber: form.mobileNumber.value.trim(),
+                emailAddress: form.emailAddress.value.trim(),
+                state: form.state.value,
+                notes: form.notes.value.trim(),
+                
+                // Collect all selected languages
+                languages: Array.from(form.querySelectorAll('input[name="languages"]:checked')).map(el => el.value),
+
+                // Collect all selected skills
+                skills: Array.from(form.querySelectorAll('input[name="skills"]:checked')).map(el => el.value),
+                
+                // Collect selected primary role
+                primaryRole: form.primaryRole.value
+            };
+
+            // 2. Client-side Custom Validation
+            const mobileRegex = /^\d{10}$/;
+            let isValid = true;
+
+            // Simple required field check (HTML validation handles most, but check groups explicitly)
+            
+            // Validate Mobile Number
+            if (!mobileRegex.test(formData.mobileNumber)) {
+                alertUserError("Please enter a valid 10-digit mobile number.");
+                form.mobileNumber.focus();
+                isValid = false;
+            }
+
+            // Validate Languages (at least one)
+            const languageError = document.getElementById('languageError');
+            if (formData.languages.length === 0) {
+                languageError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                languageError.classList.add('hidden');
+            }
+
+            // Validate Skills (at least one)
+            const skillError = document.getElementById('skillError');
+            if (formData.skills.length === 0) {
+                skillError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                skillError.classList.add('hidden');
+            }
+
+            // Validate Primary Role (checked via radio group required attribute, but explicit error for UI)
+            const primaryRoleError = document.getElementById('primaryRoleError');
+            if (!formData.primaryRole) {
+                primaryRoleError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                primaryRoleError.classList.add('hidden');
+            }
+
+            if (!isValid) {
+                return; // Stop submission if validation failed
+            }
+
+            // Disable button and show loading indicator
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            loadingIndicator.classList.remove('hidden');
+
+
+            // 3. Process Submission
+            
+            // A. Send to Telegram (async, non-blocking)
+            const telegramMessage = formatDataForTelegram(formData);
+            await sendToTelegramBot(telegramMessage);
+
+            // B. Generate WhatsApp Link
+            const whatsappMessage = 
+                `Hello Hackathon Organizer, I have registered for the team join process.\n\n` +
+                `*My Details:*\n` +
+                `Name: ${formData.fullName}\n` +
+                `Mobile: ${formData.mobileNumber}\n` +
+                `Primary Role: ${formData.primaryRole}\n\n` +
+                `Please add me to the team group!`;
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
+            whatsappLink.href = whatsappUrl;
+
+            // C. Generate PDF Download Link
+            const pdfUrl = generateHackathonPDF();
+            pdfDownloadLink.href = pdfUrl;
+
+            // 4. Show Success Modal
+            showModal();
+
+            // 5. Reset Form State
+            form.reset();
+            submitButton.disabled = false;
+            submitButton.textContent = 'Join the Team';
+            loadingIndicator.classList.add('hidden');
+
+            // Explicitly remove active state for chips/labels after reset
+            document.querySelectorAll('.hidden-checkbox:checked, .hidden-radio:checked').forEach(el => {
+                el.checked = false;
+            });
+            
+        });
+
+        // Simple function to display user error message without using alert()
+        function alertUserError(message) {
+            // A simple way to show a transient error without a full modal
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 p-3 bg-red-600 text-white font-semibold rounded-lg shadow-xl z-[9999]';
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 4000); // Remove after 4 seconds
+        }
+
+        // Add a listener to handle the cleanup of the PDF URL when the link is clicked
+        pdfDownloadLink.addEventListener('click', (e) => {
+            // Revoke the Blob URL after the download starts to free up memory
+            setTimeout(() => {
+                URL.revokeObjectURL(e.target.href);
+            }, 100); 
+        });
+
+    </script>
+</body>
+</html>
